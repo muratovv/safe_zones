@@ -39,8 +39,8 @@ public class Hyperbola
 
 	private static double computeB(Geometry figure1, Geometry figure2)
 	{
-		return Math.pow((Math.pow(figure1.getCentroid().getCoordinate().distance(figure2.getCentroid().getCoordinate()), 2))
-				- (Math.pow(figure1.distance(figure2), 2)), 0.5);
+		return Math.pow((Math.pow((figure1.getCentroid().getCoordinate().distance(figure2.getCentroid().getCoordinate())) / 2.0, 2))
+				- (Math.pow(figure1.distance(figure2) / 2.0, 2)), 0.5);
 	}
 
 	private static boolean checkDistance(Geometry fig1, Geometry fig2)
