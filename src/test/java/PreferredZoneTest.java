@@ -54,7 +54,7 @@ public class PreferredZoneTest
 	public void testInternalDistance() throws Exception
 	{
 		PreferredZone zone = new PreferredZone(factory.createPolygon(coordinates), "0", 0);
-		assertEquals(5.0, zone.internalDistance(distance, coordinates[1], coordinates[4]), 0.01);
+		assertEquals(0, zone.internalDistance(distance, coordinates[1], coordinates[4]), 0.01);
 		zone = new PreferredZone(factory.createPolygon(coordinates), "0", .5);
 		assertEquals(2.5, zone.internalDistance(distance, coordinates[1], coordinates[4]), 0.01);
 	}
