@@ -4,7 +4,7 @@ import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.index.strtree.GeometryItemDistance;
 import com.vividsolutions.jts.index.strtree.ItemDistance;
 
-public class RTreeUsageTests
+public class Main
 {
 	private static GeometryFactory gFactory = new GeometryFactory();
 	private static ItemDistance distance = new GeometryItemDistance();

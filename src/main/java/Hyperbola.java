@@ -20,6 +20,13 @@ public class Hyperbola
 		b = computeB(fig1, fig2);
 	}
 
+	/**
+	 * @param factory for creating polygons
+	 * @param figure1 compute from
+	 * @param figure2 compute to, getting hyperbola brunch closer to this
+	 * @return computed hyperbola
+	 * @throws IllegalArgumentException if distance between figures equal zero
+	 */
 	static Hyperbola computeHyperbola(GeometryFactory factory, Geometry figure1, Geometry figure2)
 	{
 		return new Hyperbola(factory, figure1, figure2);
