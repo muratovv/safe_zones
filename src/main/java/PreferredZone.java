@@ -14,8 +14,8 @@ import com.vividsolutions.jts.index.strtree.ItemDistance;
 public class PreferredZone extends Polygon
 {
 	
-	String index;
-	double alpha;
+	private String index;
+	private double alpha;
 	
 	public PreferredZone(LinearRing shell, LinearRing[] holes, GeometryFactory factory, String index, double alpha)
 	{
@@ -81,7 +81,7 @@ public class PreferredZone extends Polygon
 		GeometryFactory factory = this.getFactory();
 		Point point1 = factory.createPoint(coordinate1);
 		Point point2 = factory.createPoint(coordinate2);
-		if (this.contains(point1) && this.contains(point2))
+		if (this.distance(point1) == 0 && this.distance(point2) == 0)
 		{
 			return distance.distance(new ItemBoundable(null, point1), new ItemBoundable(null, point2)) * alpha;
 		} else
