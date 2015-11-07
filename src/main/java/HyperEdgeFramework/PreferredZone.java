@@ -1,3 +1,5 @@
+package HyperEdgeFramework;
+
 import com.vividsolutions.jts.algorithm.Angle;
 import com.vividsolutions.jts.geom.*;
 import com.vividsolutions.jts.index.strtree.ItemBoundable;
@@ -87,5 +89,14 @@ public class PreferredZone extends Polygon
 		} else
 			throw new IllegalArgumentException("coordinates not in preferred zone");
 	}
-	
+
+	public String getIndex()
+	{
+		return index;
+	}
+
+	public double getAlpha()
+	{
+		return alpha;
+	}
 }

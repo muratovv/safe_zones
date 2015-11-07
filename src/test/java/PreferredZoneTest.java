@@ -1,3 +1,4 @@
+import HyperEdgeFramework.PreferredZone;
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.Polygon;
@@ -21,7 +22,6 @@ public class PreferredZoneTest
 			new Coordinate(5, 1),
 			new Coordinate(2, 1),
 	};
-
 
 	@Test
 	public void testCreation() throws Exception

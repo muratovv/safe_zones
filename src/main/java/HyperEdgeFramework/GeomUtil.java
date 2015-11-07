@@ -1,3 +1,5 @@
+package HyperEdgeFramework;
+
 import com.vividsolutions.jts.algorithm.Angle;
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Geometry;
@@ -6,7 +8,7 @@ import com.vividsolutions.jts.math.Vector2D;
 import javafx.util.Pair;
 
 /**
- * Hyperbola represents in canonical view: x^2 / (a^2) - y^2 / (b^2) = 1,
+ * HyperEdgeFramework.Hyperbola represents in canonical view: x^2 / (a^2) - y^2 / (b^2) = 1,
  * where 2 * a - distance between figures and
  * b^2 = c^2 - a^2, c - distance between centers.
  */
