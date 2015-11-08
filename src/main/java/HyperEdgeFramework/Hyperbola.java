@@ -29,7 +29,7 @@ public class Hyperbola
 	 * @return computed hyperbola
 	 * @throws IllegalArgumentException if distance between figures equal zero
 	 */
-	static Hyperbola computeHyperbola(GeometryFactory factory, Geometry figure1, Geometry figure2)
+	static Hyperbola create(GeometryFactory factory, Geometry figure1, Geometry figure2)
 	{
 		return new Hyperbola(factory, figure1, figure2);
 	}
@@ -71,6 +71,6 @@ public class Hyperbola
 	 */
 	public Pair<Double, Double> getHyperbolaParameters()
 	{
-		return new Pair<Double, Double>(a, b);
+		return new Pair<>(a, b);
 	}
 }
