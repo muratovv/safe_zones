@@ -11,9 +11,10 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="library" name="com.vividsolutions:jts:1.13" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: junit:junit:4.10" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: org.hamcrest:hamcrest-core:1.1" level="project" />
     <orderEntry type="library" name="org.jgrapht:jgrapht-core:0.9.1" level="project" />
+    <orderEntry type="library" name="com.vividsolutions:jts-core:1.14.0" level="project" />
+    <orderEntry type="library" name="com.github.davidmoten:rtree:0.6.9" level="project" />
   </component>
 </module>

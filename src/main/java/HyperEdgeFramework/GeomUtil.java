@@ -18,7 +18,7 @@ public class GeomUtil
 	{
 		Coordinate center = figure.getCentroid().getCoordinate();
 		double radius = figure.getCoordinate().distance(center);
-		return new Pair<Coordinate, Double>(center, radius);
+		return new Pair<>(center, radius);
 	}
 
 	/**
@@ -32,9 +32,7 @@ public class GeomUtil
 		Vector2D vector = new Vector2D(circle1.getKey(), circle2.getKey());
 		vector = vector.divide(2);
 		Coordinate midInVec = vector.toCoordinate();
-		return new Pair<Coordinate, Double>(
-				new Coordinate(circle1.getKey().x + midInVec.x, circle1.getKey().y + midInVec.y),
-				angle);
+		return new Pair<>(new Coordinate(circle1.getKey().x + midInVec.x, circle1.getKey().y + midInVec.y), angle);
 	}
 
 	public static Geometry transformByRule(GeometryFactory factory, Geometry figure, Pair<Coordinate, Double> transformation)
@@ -59,8 +57,6 @@ public class GeomUtil
 
 	public static Pair<Coordinate, Double> getReverseTransformRule(Pair<Coordinate, Double> rule)
 	{
-		return new Pair<Coordinate, Double>(
-				new Coordinate(-rule.getKey().x, -rule.getKey().y),
-				-rule.getValue());
+		return new Pair<>(new Coordinate(-rule.getKey().x, -rule.getKey().y), -rule.getValue());
 	}
 }
