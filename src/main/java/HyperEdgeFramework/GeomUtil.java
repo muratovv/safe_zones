@@ -28,7 +28,7 @@ public class GeomUtil
 	{
 		Pair<Coordinate, Double> circle1 = getCircleParameters(figure1);
 		Pair<Coordinate, Double> circle2 = getCircleParameters(figure2);
-		Double angle = Angle.angle(circle2.getKey(), circle1.getKey());
+		Double angle = Angle.angle(circle1.getKey(), circle2.getKey());
 		Vector2D vector = new Vector2D(circle1.getKey(), circle2.getKey());
 		vector = vector.divide(2);
 		Coordinate midInVec = vector.toCoordinate();
