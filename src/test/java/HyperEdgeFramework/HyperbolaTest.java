@@ -50,8 +50,8 @@ public class HyperbolaTest
 	{
 		double radius = .001;
 		double x = .5;
-		Geometry c1 = createCircle(new Coordinate(x, 0), radius, 20);
-		Geometry c2 = createCircle(new Coordinate(-x, 0), radius, 20);
+		Geometry c1 = createCircle(new Coordinate(-x, 0), radius, 20);
+		Geometry c2 = createCircle(new Coordinate(x, 0), radius, 20);
 		Hyperbola hyperbola = Hyperbola.create(gFactory, c1, c2);
 		System.out.println(hyperView(hyperbola, -2, 2, 0.05));
 	}

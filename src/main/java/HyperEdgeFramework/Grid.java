@@ -20,4 +20,16 @@ public class Grid
 		}
 		return linear;
 	}
+
+	public static ArrayList<Circle> squareGrid(int line, Point start, double rad, double between)
+	{
+		ArrayList<Circle> square = new ArrayList<>();
+		for (int i = 0; i < line; i++)
+		{
+			double x = start.x();
+			double y = start.y() - i * (2 * rad + between);
+			square.addAll(linearGrid(line, Point.create(x, y), rad, between));
+		}
+		return square;
+	}
 }
