@@ -1,5 +1,6 @@
 package HyperEdgeFramework;
 
+import HyperEdgeFramework.Util.DoubleUtil;
 import com.vividsolutions.jts.algorithm.Angle;
 import com.vividsolutions.jts.geom.*;
 import com.vividsolutions.jts.index.strtree.ItemBoundable;
@@ -75,7 +76,7 @@ public class PreferredZone extends Polygon
 
 	private boolean checkAlpha(double alpha)
 	{
-		return 0 <= alpha && alpha < 1;
+		return DoubleUtil.le(0, alpha) && DoubleUtil.l(alpha, 1);
 	}
 
 	public double internalDistance(ItemDistance distance, Coordinate coordinate1, Coordinate coordinate2)

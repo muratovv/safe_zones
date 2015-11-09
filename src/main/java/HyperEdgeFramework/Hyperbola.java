@@ -1,5 +1,6 @@
 package HyperEdgeFramework;
 
+import HyperEdgeFramework.Util.DoubleUtil;
 import HyperEdgeFramework.Util.GeomUtil;
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Geometry;
@@ -49,7 +50,8 @@ public class Hyperbola
 
 	private static boolean checkDistance(Geometry fig1, Geometry fig2)
 	{
-		return fig1.distance(fig2) > 0;
+		double distance = fig1.distance(fig2);
+		return DoubleUtil.g(distance, 0);
 	}
 
 	public boolean inRightBrunch(Geometry figure)
@@ -65,8 +67,9 @@ public class Hyperbola
 	public boolean inRightBrunch(Coordinate coordinate)
 	{
 		Coordinate cBar = GeomUtil.applyTransformationOnCoordinate(coordinate, transformationRule);
-		//TODO remove hardcode
-		return cBar.x > 0 && (cBar.x * cBar.x / (a * a)) - (cBar.y * cBar.y / (b * b)) >= 0.99998;
+		return DoubleUtil.g(cBar.x, 0)
+				&& DoubleUtil.ge((cBar.x * cBar.x / (a * a)) - (cBar.y * cBar.y / (b * b)), 1);
+
 	}
 
 	/**

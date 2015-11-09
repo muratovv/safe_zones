@@ -14,9 +14,7 @@ public class Grid
 		double y = start.y();
 		for (int i = 0; i < quantity; i++)
 		{
-			linear.add(Circle.create(x + i * (2 * rad + between),
-					y,
-					rad));
+			linear.add(Circle.create(x + i * (2 * rad + between), y, rad));
 		}
 		return linear;
 	}

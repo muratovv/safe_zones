@@ -1,6 +1,7 @@
 package HyperEdgeFramework;
 
 import HyperEdgeFramework.Util.AdapterUtil;
+import HyperEdgeFramework.Util.DoubleUtil;
 import com.github.davidmoten.rtree.geometry.Circle;
 import com.github.davidmoten.rtree.geometry.Point;
 import com.vividsolutions.jts.geom.Coordinate;
@@ -21,9 +22,9 @@ public class HyperbolaTest
 	private static String hyperView(Hyperbola hyperbola, double from, double to, double step)
 	{
 		StringBuilder builder = new StringBuilder();
-		for (double y = from; y <= to; y += step)
+		for (double y = from; DoubleUtil.le(y, to); y += step)
 		{
-			for (double x = from; x <= to; x += step)
+			for (double x = from; DoubleUtil.le(x, to); x += step)
 			{
 				if (hyperbola.inRightBrunch(new Coordinate(x, y)))
 					builder.append('+');
