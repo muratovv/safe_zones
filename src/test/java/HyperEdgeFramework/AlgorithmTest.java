@@ -41,6 +41,7 @@ public class AlgorithmTest
 			Circle circle = circles.get(i);
 			rTree = rTree.add(new Entry<>(i + "", circle));
 			notVisited.add(new Entry<>(i + "", circle));
+			System.out.println(String.format("%d (%f, %f)", i, circle.x(), circle.y()));
 		}
 		SimpleWeightedGraph<String, HyperEdgeAlgorithm.EdgeWrapper> graph = HyperEdgeAlgorithm.algorithm1Circle(rTree, notVisited);
 		System.out.println(graph);

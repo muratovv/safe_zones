@@ -41,8 +41,9 @@ public class Hyperbola
 
 	private static double computeB(Geometry figure1, Geometry figure2)
 	{
-		return Math.pow((Math.pow((figure1.getCentroid().getCoordinate().distance(figure2.getCentroid().getCoordinate())) / 2.0, 2))
-				- (Math.pow(figure1.distance(figure2) / 2.0, 2)), 0.5);
+		double a = figure1.distance(figure2) / 2.;
+		double c = figure1.getCentroid().distance(figure2.getCentroid()) / 2;
+		return Math.sqrt(c * c - a * a);
 	}
 
 	private static boolean checkDistance(Geometry fig1, Geometry fig2)
@@ -63,7 +64,8 @@ public class Hyperbola
 	public boolean inRightBrunch(Coordinate coordinate)
 	{
 		Coordinate cBar = GeomUtil.applyTransformationOnCoordinate(coordinate, transformationRule);
-		return cBar.x > 0 && (cBar.x * cBar.x / (a * a)) - (cBar.y * cBar.y / (b * b)) >= 1;
+		//TODO remove hardcode
+		return cBar.x > 0 && (cBar.x * cBar.x / (a * a)) - (cBar.y * cBar.y / (b * b)) >= 0.99998;
 	}
 
 	/**

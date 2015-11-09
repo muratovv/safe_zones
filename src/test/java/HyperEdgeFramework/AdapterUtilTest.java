@@ -12,7 +12,7 @@ public class AdapterUtilTest
 {
 	
 	@Test
-	public void testPolygon() throws Exception
+	public void testPolygonCreation() throws Exception
 	{
 		double x = 101;
 		double y = -2023;

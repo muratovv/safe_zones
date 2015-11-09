@@ -64,8 +64,8 @@ public class HyperbolaTest
 		Geometry c1 = createCircle(new Coordinate(x, 0), radius, 20);
 		Geometry c2 = createCircle(new Coordinate(-x, 0), radius, 20);
 		Hyperbola hyperbola = Hyperbola.create(gFactory, c1, c2);
-		Assert.assertEquals(true, hyperbola.inRightBrunch(c1));
-		Assert.assertEquals(false, hyperbola.inRightBrunch(c2));
+		Assert.assertEquals(false, hyperbola.inRightBrunch(c1));
+		Assert.assertEquals(true, hyperbola.inRightBrunch(c2));
 	}
 
 	@Test
@@ -74,12 +74,10 @@ public class HyperbolaTest
 		int between = 1;
 		int quantity = 3;
 		ArrayList<Circle> circles = Grid.linearGrid(quantity, Point.create(0, 0), 1, between);
-		ArrayList<Polygon> polygons = circles.stream().map(circle -> AdapterUtil.polygon(new GeometryFactory(), circle, 3)).collect(Collectors.toCollection(ArrayList::new));
-		for (int i = 0; i < polygons.size() - 1; i++)
-		{
-			//check grid work
-			Assert.assertEquals(between, polygons.get(i).distance(polygons.get(i + 1)), 0.01);
-		}
+		ArrayList<Polygon> polygons = circles.stream().map(circle ->
+				AdapterUtil.polygon(new GeometryFactory(), circle, 3))
+				.collect(Collectors.toCollection(ArrayList::new));
+
 		Hyperbola hyperbola = Hyperbola.create(new GeometryFactory(), polygons.get(0), polygons.get(1));
 		Assert.assertFalse(hyperbola.inRightBrunch(polygons.get(0)));
 		for (int i = 1; i < polygons.size(); i++)
@@ -102,7 +100,7 @@ public class HyperbolaTest
 	}
 
 	@Test
-	public void testHyperbolaTransformationRule()
+	public void testHyperbolaTransformationRule1()
 	{
 		int between = 1;
 		int quantity = 2;
@@ -113,5 +111,23 @@ public class HyperbolaTest
 		Assert.assertEquals(1.5, hyperbola.transformationRule.getKey().x, 0.01);
 		Assert.assertEquals(0, hyperbola.transformationRule.getKey().y, 0.01);
 		Assert.assertEquals(0, hyperbola.transformationRule.getValue(), 0.01);
+	}
+
+	@Test
+	public void testHyperbolaTransformationRule2()
+	{
+		Circle circle3 = Circle.create(0, -3, 1);
+		Circle circle5 = Circle.create(0, -6, 1);
+		Circle circle6 = Circle.create(3, -6, 1);
+		Polygon polygon3 = AdapterUtil.polygon(new GeometryFactory(), circle3, 1);
+		Polygon polygon5 = AdapterUtil.polygon(new GeometryFactory(), circle5, 1);
+		Polygon polygon6 = AdapterUtil.polygon(new GeometryFactory(), circle6, 1);
+
+		Hyperbola hyperbola = Hyperbola.create(new GeometryFactory(), polygon3,
+				polygon5);
+
+		Assert.assertTrue(hyperbola.inRightBrunch(polygon5));
+		Assert.assertFalse(hyperbola.inRightBrunch(polygon3));
+		Assert.assertFalse(hyperbola.inRightBrunch(polygon6));
 	}
 }
