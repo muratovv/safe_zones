@@ -4,7 +4,6 @@ import com.github.davidmoten.rtree.Entry;
 import com.github.davidmoten.rtree.RTree;
 import com.github.davidmoten.rtree.geometry.Circle;
 import com.github.davidmoten.rtree.geometry.Geometry;
-import com.github.davidmoten.rtree.geometry.Point;
 import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.Polygon;
 import org.jgrapht.graph.SimpleWeightedGraph;
@@ -13,22 +12,22 @@ import rx.Observable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class HyperAdgeAlgorithm
+public class HyperEdgeAlgorithm
 {
-	public static SimpleWeightedGraph<String, EdgeWrapper> algorithm1Circle(RTree<String, Circle> rtree)
+	public static SimpleWeightedGraph<String, EdgeWrapper> algorithm1Circle(RTree<String, Circle> rtree, List<Entry<String, Geometry>> notVisited)
 	{
 		SimpleWeightedGraph<String, EdgeWrapper> graph = new SimpleWeightedGraph<>(EdgeWrapper.class);
-		while (rtree.size() > 1)
+		while (notVisited.size() > 1)
 		{
-			Entry<String, Circle> vZone = arbitraryNode(rtree);
-
-			Polygon vZonePoly = AdapterUtil.polygon(new GeometryFactory(), vZone.geometry(), 5);
+			Entry<String, Geometry> vZone = arbitraryNode(notVisited);
+			Polygon vZonePoly = AdapterUtil.polygon(new GeometryFactory(), (Circle) vZone.geometry(), 5);
 			graph.addVertex(vZone.value());
-			rtree = rtree.delete(vZone);
+			//TODO bug with insert node
+//			rtree = rtree.delete(vZone);
 
 			ArrayList<Hyperbola> hyperbolas = new ArrayList<>();
+			int currentNearest = 2;
 
-			int currentNearest = 1;
 			while (true)
 			{
 				if (rtree.size() == 0)
@@ -42,6 +41,7 @@ public class HyperAdgeAlgorithm
 					break;
 
 				Entry<String, Circle> uZone = nearestList.get(currentNearest - 1);
+
 				Polygon uZonePoly = AdapterUtil.polygon(new GeometryFactory(), uZone.geometry(), 5);
 				if (!anyCover(hyperbolas, uZonePoly))
 				{
@@ -50,16 +50,19 @@ public class HyperAdgeAlgorithm
 					hyperbolas.add(Hyperbola.create(new GeometryFactory(), vZonePoly, uZonePoly));
 
 					currentNearest++;
-				} else break;
+				} else
+				{
+					break;
+				}
 			}
 		}
 		return graph;
 	}
 
-	private static <V, K extends Geometry> Entry<V, K> arbitraryNode(RTree<V, K> tree)
+	private static <V, K extends Geometry> Entry<String, Geometry> arbitraryNode(List<Entry<String, Geometry>> notVisited)
 	{
-		List<Entry<V, K>> last = tree.nearest(Point.create(0, 0), Double.POSITIVE_INFINITY, 1).toList().toBlocking().single();
-		return last.get(0);
+		Entry<String, Geometry> visited = notVisited.remove(0);
+		return visited;
 	}
 
 	private static boolean anyCover(List<Hyperbola> hyperbolas, Polygon polygon)
