@@ -1,5 +1,6 @@
 package HyperEdgeFramework;
 
+import HyperEdgeFramework.Util.GeomUtil;
 import com.vividsolutions.jts.geom.Coordinate;
 import javafx.util.Pair;
 import org.junit.Assert;

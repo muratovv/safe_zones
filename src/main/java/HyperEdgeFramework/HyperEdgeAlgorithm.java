@@ -1,5 +1,6 @@
 package HyperEdgeFramework;
 
+import HyperEdgeFramework.Util.AdapterUtil;
 import com.github.davidmoten.rtree.Entry;
 import com.github.davidmoten.rtree.RTree;
 import com.github.davidmoten.rtree.geometry.Circle;
@@ -22,8 +23,6 @@ public class HyperEdgeAlgorithm
 			Entry<String, Geometry> vZone = arbitraryNode(notVisited);
 			Polygon vZonePoly = AdapterUtil.polygon(new GeometryFactory(), (Circle) vZone.geometry(), 5);
 			graph.addVertex(vZone.value());
-			//TODO bug with insert node
-//			rtree = rtree.delete(vZone);
 
 			ArrayList<Hyperbola> hyperbolas = new ArrayList<>();
 			int currentNearest = 2;

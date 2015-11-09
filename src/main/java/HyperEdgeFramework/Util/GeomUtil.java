@@ -1,4 +1,4 @@
-package HyperEdgeFramework;
+package HyperEdgeFramework.Util;
 
 import com.vividsolutions.jts.algorithm.Angle;
 import com.vividsolutions.jts.geom.Coordinate;
