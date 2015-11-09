@@ -48,15 +48,17 @@ public class GeomUtil
 
 	public static Coordinate applyTransformationOnCoordinate(Coordinate coordinate, Pair<Coordinate, Double> transformation)
 	{
-		double xBar = coordinate.x * Math.cos(transformation.getValue())
-				+ coordinate.y * Math.sin(transformation.getValue());
-		double yBar = -1 * coordinate.x * Math.sin(transformation.getValue())
-				+ coordinate.y * Math.cos(transformation.getValue());
-		return new Coordinate(xBar, yBar);
-	}
+		double alpha = transformation.getValue();
+		double xDiff = coordinate.x - transformation.getKey().x;
+		double yDiff = coordinate.y - transformation.getKey().y;
 
-	public static Pair<Coordinate, Double> getReverseTransformRule(Pair<Coordinate, Double> rule)
-	{
-		return new Pair<>(new Coordinate(-rule.getKey().x, -rule.getKey().y), -rule.getValue());
+		double xBar = xDiff * Math.cos(alpha)
+				+ yDiff * Math.sin(alpha);
+
+
+		double yBar = -xDiff * Math.sin(alpha)
+				+ yDiff * Math.cos(alpha);
+
+		return new Coordinate(xBar, yBar);
 	}
 }
