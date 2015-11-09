@@ -1,6 +1,5 @@
-package HyperEdgeFramework;
+package HyperEdgeFramework.Util;
 
-import HyperEdgeFramework.Util.AdapterUtil;
 import com.github.davidmoten.rtree.geometry.Circle;
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.GeometryFactory;
