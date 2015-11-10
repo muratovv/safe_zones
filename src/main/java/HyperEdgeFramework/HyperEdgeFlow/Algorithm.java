@@ -5,7 +5,6 @@ import HyperEdgeFramework.Util.AdapterUtil;
 import com.github.davidmoten.rtree.Entry;
 import com.github.davidmoten.rtree.RTree;
 import com.github.davidmoten.rtree.geometry.Circle;
-import com.github.davidmoten.rtree.geometry.Geometry;
 import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.Polygon;
 import org.jgrapht.graph.SimpleWeightedGraph;
@@ -16,13 +15,13 @@ import java.util.List;
 
 public class Algorithm
 {
-	public static SimpleWeightedGraph<String, EdgeWrapper> algorithm1Circle(RTree<String, Circle> rtree, List<Entry<String, Geometry>> notVisited)
+	public static SimpleWeightedGraph<String, EdgeWrapper> algorithm1Circle(RTree<String, Circle> rtree, List<Entry<String, Circle>> notVisited)
 	{
 		SimpleWeightedGraph<String, EdgeWrapper> graph = new SimpleWeightedGraph<>(EdgeWrapper.class);
 		while (notVisited.size() > 1)
 		{
-			Entry<String, Geometry> vZone = arbitraryNode(notVisited);
-			Polygon vZonePoly = AdapterUtil.polygon(new GeometryFactory(), (Circle) vZone.geometry(), 5);
+			Entry<String, Circle> vZone = arbitraryNode(notVisited);
+			Polygon vZonePoly = AdapterUtil.polygon(new GeometryFactory(), vZone.geometry(), 5);
 			graph.addVertex(vZone.value());
 
 			ArrayList<Hyperbola> hyperbolas = new ArrayList<>();
@@ -57,10 +56,9 @@ public class Algorithm
 		return graph;
 	}
 
-	private static Entry<String, Geometry> arbitraryNode(List<Entry<String, Geometry>> notVisited)
+	private static Entry<String, Circle> arbitraryNode(List<Entry<String, Circle>> notVisited)
 	{
-		Entry<String, Geometry> visited = notVisited.remove(0);
-		return visited;
+		return notVisited.remove(0);
 	}
 
 	public static boolean anyCover(List<Hyperbola> hyperbolas, Polygon polygon)
