@@ -29,8 +29,6 @@ public class HyperEdgeAlgorithm
 
 			while (true)
 			{
-				if (rtree.size() == 0)
-					break;
 				Observable<Entry<String, Circle>> nearest = rtree.nearest(vZone.geometry().mbr(),
 						Double.POSITIVE_INFINITY,
 						currentNearest);
@@ -58,7 +56,7 @@ public class HyperEdgeAlgorithm
 		return graph;
 	}
 
-	private static <V, K extends Geometry> Entry<String, Geometry> arbitraryNode(List<Entry<String, Geometry>> notVisited)
+	private static Entry<String, Geometry> arbitraryNode(List<Entry<String, Geometry>> notVisited)
 	{
 		Entry<String, Geometry> visited = notVisited.remove(0);
 		return visited;

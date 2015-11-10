@@ -6,6 +6,7 @@ import com.github.davidmoten.rtree.geometry.Circle;
 import com.github.davidmoten.rtree.geometry.Geometry;
 import com.github.davidmoten.rtree.geometry.Point;
 import org.jgrapht.graph.SimpleWeightedGraph;
+import org.junit.Assert;
 import org.junit.Test;
 
 import java.util.ArrayList;
@@ -26,6 +27,8 @@ public class AlgorithmTest
 			notVisited.add(new Entry<>(i + "", circle));
 		}
 		SimpleWeightedGraph<String, HyperEdgeAlgorithm.EdgeWrapper> graph = HyperEdgeAlgorithm.algorithm1Circle(rTree, notVisited);
+		Assert.assertEquals(4, graph.vertexSet().size());
+		Assert.assertEquals(3, graph.edgeSet().size());
 		System.out.println(graph);
 	}
 
@@ -44,6 +47,8 @@ public class AlgorithmTest
 			System.out.println(String.format("%d (%f, %f)", i, circle.x(), circle.y()));
 		}
 		SimpleWeightedGraph<String, HyperEdgeAlgorithm.EdgeWrapper> graph = HyperEdgeAlgorithm.algorithm1Circle(rTree, notVisited);
+		Assert.assertEquals(8, graph.vertexSet().size());
+		Assert.assertEquals(14, graph.edgeSet().size());
 		System.out.println(graph);
 	}
 
