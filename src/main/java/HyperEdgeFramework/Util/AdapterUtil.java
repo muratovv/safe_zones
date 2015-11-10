@@ -20,4 +20,9 @@ public class AdapterUtil
 		double a = circle.mbr().perimeter() / 4.;
 		return a / 2.;
 	}
+
+	public static Coordinate point(com.github.davidmoten.rtree.geometry.Point point)
+	{
+		return new Coordinate(point.x(), point.y());
+	}
 }

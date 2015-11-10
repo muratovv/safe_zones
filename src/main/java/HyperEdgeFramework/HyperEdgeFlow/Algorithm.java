@@ -1,5 +1,6 @@
-package HyperEdgeFramework;
+package HyperEdgeFramework.HyperEdgeFlow;
 
+import HyperEdgeFramework.Hyperbola;
 import HyperEdgeFramework.Util.AdapterUtil;
 import com.github.davidmoten.rtree.Entry;
 import com.github.davidmoten.rtree.RTree;
@@ -13,7 +14,7 @@ import rx.Observable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class HyperEdgeAlgorithm
+public class Algorithm
 {
 	public static SimpleWeightedGraph<String, EdgeWrapper> algorithm1Circle(RTree<String, Circle> rtree, List<Entry<String, Geometry>> notVisited)
 	{
@@ -62,7 +63,7 @@ public class HyperEdgeAlgorithm
 		return visited;
 	}
 
-	private static boolean anyCover(List<Hyperbola> hyperbolas, Polygon polygon)
+	public static boolean anyCover(List<Hyperbola> hyperbolas, Polygon polygon)
 	{
 		for (Hyperbola hyperbola : hyperbolas)
 		{

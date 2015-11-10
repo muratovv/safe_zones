@@ -1,5 +1,6 @@
 package HyperEdgeFramework;
 
+import HyperEdgeFramework.HyperEdgeFlow.Algorithm;
 import com.github.davidmoten.rtree.Entry;
 import com.github.davidmoten.rtree.RTree;
 import com.github.davidmoten.rtree.geometry.Circle;
@@ -26,7 +27,7 @@ public class AlgorithmTest
 			rTree = rTree.add(new Entry<>(i + "", circle));
 			notVisited.add(new Entry<>(i + "", circle));
 		}
-		SimpleWeightedGraph<String, HyperEdgeAlgorithm.EdgeWrapper> graph = HyperEdgeAlgorithm.algorithm1Circle(rTree, notVisited);
+		SimpleWeightedGraph<String, Algorithm.EdgeWrapper> graph = Algorithm.algorithm1Circle(rTree, notVisited);
 		Assert.assertEquals(4, graph.vertexSet().size());
 		Assert.assertEquals(3, graph.edgeSet().size());
 		System.out.println(graph);
@@ -46,7 +47,7 @@ public class AlgorithmTest
 			notVisited.add(new Entry<>(i + "", circle));
 			System.out.println(String.format("%d (%f, %f)", i, circle.x(), circle.y()));
 		}
-		SimpleWeightedGraph<String, HyperEdgeAlgorithm.EdgeWrapper> graph = HyperEdgeAlgorithm.algorithm1Circle(rTree, notVisited);
+		SimpleWeightedGraph<String, Algorithm.EdgeWrapper> graph = Algorithm.algorithm1Circle(rTree, notVisited);
 		Assert.assertEquals(8, graph.vertexSet().size());
 		Assert.assertEquals(14, graph.edgeSet().size());
 		System.out.println(graph);

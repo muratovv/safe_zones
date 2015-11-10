@@ -31,7 +31,7 @@ public class Hyperbola
 	 * @return computed hyperbola
 	 * @throws IllegalArgumentException if distance between figures equal zero
 	 */
-	static Hyperbola create(GeometryFactory factory, Geometry figure1, Geometry figure2)
+	public static Hyperbola create(GeometryFactory factory, Geometry figure1, Geometry figure2)
 	{
 		return new Hyperbola(factory, figure1, figure2);
 	}
@@ -69,7 +69,6 @@ public class Hyperbola
 		Coordinate cBar = GeomUtil.applyTransformationOnCoordinate(coordinate, transformationRule);
 		return DoubleUtil.g(cBar.x, 0)
 				&& DoubleUtil.ge((cBar.x * cBar.x / (a * a)) - (cBar.y * cBar.y / (b * b)), 1);
-
 	}
 
 	/**
