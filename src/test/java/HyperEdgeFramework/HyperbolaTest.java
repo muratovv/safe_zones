@@ -110,9 +110,9 @@ public class HyperbolaTest
 		ArrayList<Polygon> polygons = circles.stream().map(circle -> AdapterUtil.polygon(new GeometryFactory(), circle, 1))
 				.collect(Collectors.toCollection(ArrayList::new));
 		Hyperbola hyperbola = Hyperbola.create(new GeometryFactory(), polygons.get(0), polygons.get(1));
-		Assert.assertEquals(1.5, hyperbola.transformationRule.getKey().x, 0.01);
-		Assert.assertEquals(0, hyperbola.transformationRule.getKey().y, 0.01);
-		Assert.assertEquals(0, hyperbola.transformationRule.getValue(), 0.01);
+		Assert.assertEquals(1.5, hyperbola.rule.getTransformation().getKey().x, 0.01);
+		Assert.assertEquals(0, hyperbola.rule.getTransformation().getKey().y, 0.01);
+		Assert.assertEquals(0, hyperbola.rule.getTransformation().getValue(), 0.01);
 	}
 
 	@Test

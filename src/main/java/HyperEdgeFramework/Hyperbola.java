@@ -11,13 +11,13 @@ public class Hyperbola
 {
 	double a;
 	double b;
-	Pair<Coordinate, Double> transformationRule;
+	GeomUtil.Transformation rule;
 
 	private Hyperbola(GeometryFactory gFactory, Geometry figure1, Geometry figure2)
 	{
-		transformationRule = GeomUtil.getTransformRule(figure1, figure2);
-		Geometry fig1 = GeomUtil.transformByRule(gFactory, (Geometry) figure1.clone(), transformationRule);
-		Geometry fig2 = GeomUtil.transformByRule(gFactory, ((Geometry) figure2.clone()), transformationRule);
+		rule = new GeomUtil.Transformation(figure1, figure2);
+		Geometry fig1 = rule.transform(gFactory, (Geometry) figure1.clone());
+		Geometry fig2 = rule.transform(gFactory, ((Geometry) figure2.clone()));
 		if (!checkDistance(fig1, fig2))
 			throw new IllegalArgumentException("Distance between figures must be greater zero");
 		a = computeA(fig1, fig2);
@@ -66,7 +66,7 @@ public class Hyperbola
 
 	public boolean inRightBrunch(Coordinate coordinate)
 	{
-		Coordinate cBar = GeomUtil.applyTransformationOnCoordinate(coordinate, transformationRule);
+		Coordinate cBar = rule.transform(coordinate);
 		return DoubleUtil.g(cBar.x, 0)
 				&& DoubleUtil.ge((cBar.x * cBar.x / (a * a)) - (cBar.y * cBar.y / (b * b)), 1);
 	}

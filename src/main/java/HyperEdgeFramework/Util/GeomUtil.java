@@ -21,44 +21,60 @@ public class GeomUtil
 		return new Pair<>(center, radius);
 	}
 
-	/**
-	 * @return Coordinate offset, angle (in rads)
-	 */
-	public static Pair<Coordinate, Double> getTransformRule(Geometry figure1, Geometry figure2)
+	public static class Transformation
 	{
-		Pair<Coordinate, Double> circle1 = getCircleParameters(figure1);
-		Pair<Coordinate, Double> circle2 = getCircleParameters(figure2);
-		Double angle = Angle.angle(circle1.getKey(), circle2.getKey());
-		Vector2D vector = new Vector2D(circle1.getKey(), circle2.getKey());
-		vector = vector.divide(2);
-		Coordinate midInVec = vector.toCoordinate();
-		return new Pair<>(new Coordinate(circle1.getKey().x + midInVec.x, circle1.getKey().y + midInVec.y), angle);
-	}
+		Pair<Coordinate, Double> transformation;
 
-	public static Geometry transformByRule(GeometryFactory factory, Geometry figure, Pair<Coordinate, Double> transformation)
-	{
-		Coordinate[] newCoordinates = new Coordinate[figure.getCoordinates().length];
-		Coordinate[] coordinates = figure.getCoordinates();
-		for (int i = 0; i < coordinates.length; i++)
+		public Transformation(Geometry figure1, Geometry figure2)
 		{
-			newCoordinates[i] = applyTransformationOnCoordinate(figure.getCoordinates()[i], transformation);
+			Pair<Coordinate, Double> transformRule = getTransformRule(figure1, figure2);
+			transformation = new Pair<>(transformRule.getKey(), transformRule.getValue());
 		}
-		return factory.createPolygon(newCoordinates);
-	}
 
-	public static Coordinate applyTransformationOnCoordinate(Coordinate coordinate, Pair<Coordinate, Double> transformation)
-	{
-		double alpha = transformation.getValue();
-		double xDiff = coordinate.x - transformation.getKey().x;
-		double yDiff = coordinate.y - transformation.getKey().y;
+		/**
+		 * @return Coordinate offset, angle (in rads)
+		 */
+		private static Pair<Coordinate, Double> getTransformRule(Geometry figure1, Geometry figure2)
+		{
+			Pair<Coordinate, Double> circle1 = getCircleParameters(figure1);
+			Pair<Coordinate, Double> circle2 = getCircleParameters(figure2);
+			Double angle = Angle.angle(circle1.getKey(), circle2.getKey());
+			Vector2D vector = new Vector2D(circle1.getKey(), circle2.getKey());
+			vector = vector.divide(2);
+			Coordinate midInVec = vector.toCoordinate();
+			return new Pair<>(new Coordinate(circle1.getKey().x + midInVec.x, circle1.getKey().y + midInVec.y), angle);
+		}
 
-		double xBar = xDiff * Math.cos(alpha)
-				+ yDiff * Math.sin(alpha);
+		public Pair<Coordinate, Double> getTransformation()
+		{
+			return new Pair<>(((Coordinate) transformation.getKey().clone()), transformation.getValue());
+		}
 
+		public Coordinate transform(Coordinate coordinate)
+		{
+			double alpha = transformation.getValue();
+			double xDiff = coordinate.x - transformation.getKey().x;
+			double yDiff = coordinate.y - transformation.getKey().y;
 
-		double yBar = -xDiff * Math.sin(alpha)
-				+ yDiff * Math.cos(alpha);
+			double xBar = xDiff * Math.cos(alpha)
+					+ yDiff * Math.sin(alpha);
 
-		return new Coordinate(xBar, yBar);
+			double yBar = -xDiff * Math.sin(alpha)
+					+ yDiff * Math.cos(alpha);
+
+			return new Coordinate(xBar, yBar);
+		}
+
+		public Geometry transform(GeometryFactory factory, Geometry figure)
+		{
+			Coordinate[] newCoordinates = new Coordinate[figure.getCoordinates().length];
+			Coordinate[] coordinates = figure.getCoordinates();
+			for (int i = 0; i < coordinates.length; i++)
+			{
+				newCoordinates[i] = transform(figure.getCoordinates()[i]);
+			}
+			return factory.createPolygon(newCoordinates);
+		}
+
 	}
 }
