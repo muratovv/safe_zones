@@ -1,10 +1,8 @@
 package HyperEdgeFramework.Util;
 
 import com.github.davidmoten.rtree.geometry.Circle;
-import com.vividsolutions.jts.geom.Coordinate;
-import com.vividsolutions.jts.geom.GeometryFactory;
-import com.vividsolutions.jts.geom.Point;
-import com.vividsolutions.jts.geom.Polygon;
+import com.github.davidmoten.rtree.geometry.Rectangle;
+import com.vividsolutions.jts.geom.*;
 
 public class AdapterUtil
 {
@@ -24,5 +22,24 @@ public class AdapterUtil
 	public static Coordinate point(com.github.davidmoten.rtree.geometry.Point point)
 	{
 		return new Coordinate(point.x(), point.y());
+	}
+
+	public static Rectangle rectangle(Polygon poly)
+	{
+		Envelope envelope = poly.getEnvelopeInternal();
+		return Rectangle.create(
+				envelope.getMinX(), envelope.getMinY(),
+				envelope.getMaxX(), envelope.getMaxY());
+	}
+
+	public static Polygon polygon(GeometryFactory factory, Rectangle r)
+	{
+		return factory.createPolygon(new Coordinate[]{
+				new Coordinate(r.x1(), r.y1()),
+				new Coordinate(r.x1(), r.y2()),
+				new Coordinate(r.x2(), r.y2()),
+				new Coordinate(r.x2(), r.y1()),
+				new Coordinate(r.x1(), r.y1()),
+		});
 	}
 }

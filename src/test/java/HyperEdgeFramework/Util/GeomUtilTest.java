@@ -17,7 +17,7 @@ public class GeomUtilTest
 				factory.createPoint(new Coordinate(2, 3)));
 		rule.transformation = new Pair<>(new Coordinate(1, 1), 0.);
 
-		
+
 		Coordinate coordinate = new Coordinate(2, 2);
 		Coordinate newCoord = rule.transform(coordinate);
 		Assert.assertEquals(1, newCoord.x, 0.01);

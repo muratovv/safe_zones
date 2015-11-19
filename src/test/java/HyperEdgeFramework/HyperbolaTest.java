@@ -52,23 +52,14 @@ public class HyperbolaTest
 	{
 		double radius = .001;
 		double x = .5;
-		Geometry c1 = createCircle(new Coordinate(-x, 0), radius, 20);
-		Geometry c2 = createCircle(new Coordinate(x, 0), radius, 20);
-		Hyperbola hyperbola = Hyperbola.create(gFactory, c1, c2);
+		Geometry c1 = createCircle(new Coordinate(-x, 0), radius, 3);
+		Geometry c2 = createCircle(new Coordinate(x, 0), radius, 3);
+		PreferredZone z1 = new PreferredZone(((Polygon) c1), 0);
+		PreferredZone z2 = new PreferredZone(((Polygon) c2), 0);
+		Hyperbola hyperbola = Hyperbola.create(z1, z2);
 		System.out.println(hyperView(hyperbola, -2, 2, 0.05));
 	}
 
-	@Test
-	public void testInRightBrunchEasy() throws Exception
-	{
-		double radius = .001;
-		double x = .5;
-		Geometry c1 = createCircle(new Coordinate(x, 0), radius, 20);
-		Geometry c2 = createCircle(new Coordinate(-x, 0), radius, 20);
-		Hyperbola hyperbola = Hyperbola.create(gFactory, c1, c2);
-		Assert.assertEquals(false, hyperbola.inRightBrunch(c1));
-		Assert.assertEquals(true, hyperbola.inRightBrunch(c2));
-	}
 
 	@Test
 	public void testInRightBrunchHard() throws Exception
@@ -80,7 +71,9 @@ public class HyperbolaTest
 				AdapterUtil.polygon(new GeometryFactory(), circle, 3))
 				.collect(Collectors.toCollection(ArrayList::new));
 
-		Hyperbola hyperbola = Hyperbola.create(new GeometryFactory(), polygons.get(0), polygons.get(1));
+		PreferredZone z1 = new PreferredZone(polygons.get(0), 0);
+		PreferredZone z2 = new PreferredZone(polygons.get(1), 0);
+		Hyperbola hyperbola = Hyperbola.create(z1, z2);
 		Assert.assertFalse(hyperbola.inRightBrunch(polygons.get(0)));
 		for (int i = 1; i < polygons.size(); i++)
 		{
@@ -90,29 +83,18 @@ public class HyperbolaTest
 	}
 
 	@Test
-	public void testGetHyperbolaParameters() throws Exception
+	public void testHyperbolaRightBrunch() throws Exception
 	{
-		double radius = .1;
-		double x = .5;
-		Geometry c1 = createCircle(new Coordinate(-x, 0), radius, 20);
-		Geometry c2 = createCircle(new Coordinate(x, 0), radius, 20);
-		Hyperbola hyperbola = Hyperbola.create(gFactory, c1, c2);
-		Assert.assertEquals(0.4, hyperbola.getHyperbolaParameters().getKey(), 0.01);
-		Assert.assertEquals(0.3, hyperbola.getHyperbolaParameters().getValue(), 0.01);
-	}
+		Circle circle3 = Circle.create(0, 0, 1);
+		Circle circle5 = Circle.create(3, 0, 1);
+		Polygon polygon3 = AdapterUtil.polygon(new GeometryFactory(), circle3, 3);
+		Polygon polygon5 = AdapterUtil.polygon(new GeometryFactory(), circle5, 3);
 
-	@Test
-	public void testHyperbolaTransformationRule1()
-	{
-		int between = 1;
-		int quantity = 2;
-		ArrayList<Circle> circles = Grid.linearGrid(quantity, Point.create(0, 0), 1, between);
-		ArrayList<Polygon> polygons = circles.stream().map(circle -> AdapterUtil.polygon(new GeometryFactory(), circle, 1))
-				.collect(Collectors.toCollection(ArrayList::new));
-		Hyperbola hyperbola = Hyperbola.create(new GeometryFactory(), polygons.get(0), polygons.get(1));
-		Assert.assertEquals(1.5, hyperbola.rule.getTransformation().getKey().x, 0.01);
-		Assert.assertEquals(0, hyperbola.rule.getTransformation().getKey().y, 0.01);
-		Assert.assertEquals(0, hyperbola.rule.getTransformation().getValue(), 0.01);
+		PreferredZone z1 = new PreferredZone(polygon3, 0);
+		PreferredZone z2 = new PreferredZone(polygon5, 0);
+		Hyperbola hyperbola = Hyperbola.create(z1, z2);
+		Assert.assertFalse(hyperbola.inRightBrunch(z1.getPoly()));
+		Assert.assertTrue(hyperbola.inRightBrunch(new Coordinate(2, 0)));
 	}
 
 	@Test
@@ -125,11 +107,25 @@ public class HyperbolaTest
 		Polygon polygon5 = AdapterUtil.polygon(new GeometryFactory(), circle5, 1);
 		Polygon polygon6 = AdapterUtil.polygon(new GeometryFactory(), circle6, 1);
 
-		Hyperbola hyperbola = Hyperbola.create(new GeometryFactory(), polygon3,
-				polygon5);
+		PreferredZone z1 = new PreferredZone(polygon3, 0);
+		PreferredZone z2 = new PreferredZone(polygon5, 0);
+		Hyperbola hyperbola = Hyperbola.create(z1, z2);
 
 		Assert.assertTrue(hyperbola.inRightBrunch(polygon5));
 		Assert.assertFalse(hyperbola.inRightBrunch(polygon3));
 		Assert.assertFalse(hyperbola.inRightBrunch(polygon6));
+	}
+
+	@Test
+	public void testHyperbolaStaticDistance() throws Exception
+	{
+		Circle circle0 = Circle.create(0, 0, 1);
+		Circle circle5 = Circle.create(0, 5, 1);
+		Polygon polygon0 = AdapterUtil.polygon(new GeometryFactory(), circle0, 3);
+		Polygon polygon5 = AdapterUtil.polygon(new GeometryFactory(), circle5, 3);
+		PreferredZone z1 = new PreferredZone(polygon0, .5);
+		PreferredZone z2 = new PreferredZone(polygon5, .5);
+		Hyperbola hyperbola = Hyperbola.create(z1, z2);
+		Assert.assertEquals(4., hyperbola.static_distance, DoubleUtil.eps);
 	}
 }

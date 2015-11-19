@@ -2,37 +2,38 @@ package HyperEdgeFramework;
 
 import com.github.davidmoten.rtree.Entry;
 import com.github.davidmoten.rtree.RTree;
-import com.github.davidmoten.rtree.geometry.Circle;
 
 import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 
 public class TreeInflater
 {
-	private ArrayList<Circle> circles;
-	private RTree<String, Circle> rTree;
-	private ArrayList<Entry<String, Circle>> notVisited;
+	private RTree<Integer, PreferredZone> rTree;
+	private ArrayList<PreferredZone> notVisited = new ArrayList<>();
 
-	public TreeInflater(ArrayList<Circle> circles) {this.circles = circles;}
+	public TreeInflater(List<PreferredZone> zones)
+	{
+		notVisited.addAll(zones.stream().collect(Collectors.toList()));
+	}
 
-	public RTree<String, Circle> getRTree()
+	public RTree<Integer, PreferredZone> getRTree()
 	{
 		return rTree;
 	}
 
-	public ArrayList<Entry<String, Circle>> getNotVisited()
+	@SuppressWarnings("unchecked")
+	public ArrayList<PreferredZone> getNotVisited()
 	{
-		return ((ArrayList<Entry<String, Circle>>) notVisited.clone());
+		return (ArrayList<PreferredZone>) notVisited.clone();
 	}
 
 	public TreeInflater invoke()
 	{
 		rTree = RTree.create();
-		notVisited = new ArrayList<>();
-		for (int i = 0; i < circles.size(); i++)
+		for (PreferredZone preferredZone : notVisited)
 		{
-			Circle circle = circles.get(i);
-			rTree = rTree.add(new Entry<>(i + "", circle));
-			notVisited.add(new Entry<>(i + "", circle));
+			rTree = rTree.add(new Entry<>(preferredZone.getIndex(), preferredZone));
 		}
 		return this;
 	}

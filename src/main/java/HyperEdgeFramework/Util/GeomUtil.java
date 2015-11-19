@@ -1,9 +1,7 @@
 package HyperEdgeFramework.Util;
 
 import com.vividsolutions.jts.algorithm.Angle;
-import com.vividsolutions.jts.geom.Coordinate;
-import com.vividsolutions.jts.geom.Geometry;
-import com.vividsolutions.jts.geom.GeometryFactory;
+import com.vividsolutions.jts.geom.*;
 import com.vividsolutions.jts.math.Vector2D;
 import javafx.util.Pair;
 
@@ -14,12 +12,71 @@ import javafx.util.Pair;
  */
 public class GeomUtil
 {
+
+	// StaticZone /////////////////////////////////////////////////////////////
+	private static GeometryFactory gFactory = new GeometryFactory();
+	private static GeomUtil.Metric metric = new GeomUtil.Metric.Eucludean();
+
+	public static GeometryFactory factory()
+	{
+		return gFactory;
+	}
+
+	public static GeomUtil.Metric metric()
+	{
+		return metric;
+	}
+
+	public static void setMetric(GeomUtil.Metric metric)
+	{
+		GeomUtil.metric = metric;
+	}
+
+	public static void setFactory(GeometryFactory gFactory)
+	{
+		GeomUtil.gFactory = gFactory;
+	}
+	///////////////////////////////////////////////////////////////////////////
+
 	public static Pair<Coordinate, Double> getCircleParameters(Geometry figure)
 	{
 		Coordinate center = figure.getCentroid().getCoordinate();
 		double radius = figure.getCoordinate().distance(center);
 		return new Pair<>(center, radius);
 	}
+
+	public static Coordinate computeIntersectionPoint(GeometryFactory gFactory, Polygon polygon, LineString segment)
+	{
+		Coordinate[] coordinates = polygon.intersection(segment).getCoordinates();
+
+		assert coordinates.length == 2;
+
+		for (Coordinate coordinate : coordinates)
+		{
+			if (!DoubleUtil.q(polygon.getCentroid().distance(gFactory.createPoint(coordinate)), 0))
+			{
+				return coordinate;
+			}
+		}
+		return null;
+	}
+
+	public interface Metric
+	{
+		double dist(Coordinate c1, Coordinate c2);
+
+
+		class Eucludean implements Metric
+		{
+			@Override
+			public double dist(Coordinate c1, Coordinate c2)
+			{
+				return Math.sqrt((c1.x - c2.x) * (c1.x - c2.x) + (c1.y - c2.y) * (c1.y - c2.y));
+			}
+
+		}
+	}
+
 
 	public static class Transformation
 	{

@@ -1,12 +1,9 @@
 package HyperEdgeFramework.HyperEdgeFlow;
 
 import HyperEdgeFramework.Hyperbola;
-import HyperEdgeFramework.Util.AdapterUtil;
+import HyperEdgeFramework.PreferredZone;
 import com.github.davidmoten.rtree.Entry;
 import com.github.davidmoten.rtree.RTree;
-import com.github.davidmoten.rtree.geometry.Circle;
-import com.vividsolutions.jts.geom.GeometryFactory;
-import com.vividsolutions.jts.geom.Polygon;
 import org.jgrapht.graph.SimpleWeightedGraph;
 import rx.Observable;
 
@@ -15,36 +12,35 @@ import java.util.List;
 
 public class Algorithm
 {
-	public static SimpleWeightedGraph<String, EdgeWrapper> algorithm1Circle(RTree<String, Circle> rtree, List<Entry<String, Circle>> notVisited)
+	public static SimpleWeightedGraph<Integer, EdgeWrapper> algorithm1Circle(RTree<Integer, PreferredZone> rtree, List<PreferredZone> zones)
 	{
-		SimpleWeightedGraph<String, EdgeWrapper> graph = new SimpleWeightedGraph<>(EdgeWrapper.class);
-		while (notVisited.size() > 1)
+		SimpleWeightedGraph<Integer, EdgeWrapper> graph = new SimpleWeightedGraph<>(EdgeWrapper.class);
+		while (zones.size() > 1)
 		{
-			Entry<String, Circle> vZone = arbitraryNode(notVisited);
-			Polygon vZonePoly = AdapterUtil.polygon(new GeometryFactory(), vZone.geometry(), 5);
-			graph.addVertex(vZone.value());
+			PreferredZone vZone = zones.remove(0);
+			graph.addVertex(vZone.getIndex());
 
 			ArrayList<Hyperbola> hyperbolas = new ArrayList<>();
+
 			int currentNearest = 2;
 
 			while (true)
 			{
-				Observable<Entry<String, Circle>> nearest = rtree.nearest(vZone.geometry().mbr(),
+				Observable<Entry<Integer, PreferredZone>> nearest = rtree.nearest(vZone.mbr(),
 						Double.POSITIVE_INFINITY,
 						currentNearest);
-				List<Entry<String, Circle>> nearestList = nearest.toList().toBlocking().single();
+				List<Entry<Integer, PreferredZone>> nearestList = nearest.toList().toBlocking().single();
 
 				if (nearestList.size() <= currentNearest - 1)
 					break;
 
-				Entry<String, Circle> uZone = nearestList.get(currentNearest - 1);
+				PreferredZone uZone = nearestList.get(currentNearest - 1).geometry();
 
-				Polygon uZonePoly = AdapterUtil.polygon(new GeometryFactory(), uZone.geometry(), 5);
-				if (!anyCover(hyperbolas, uZonePoly))
+				if (!anyCover(hyperbolas, uZone))
 				{
-					graph.addVertex(uZone.value());
-					graph.addEdge(vZone.value(), uZone.value(), new EdgeWrapper<>(vZonePoly.distance(uZonePoly)));
-					hyperbolas.add(Hyperbola.create(new GeometryFactory(), vZonePoly, uZonePoly));
+					graph.addVertex(uZone.getIndex());
+					graph.addEdge(vZone.getIndex(), uZone.getIndex(), new EdgeWrapper<>(vZone.distance(uZone)));
+					hyperbolas.add(Hyperbola.create(vZone, uZone));
 
 					currentNearest++;
 				} else
@@ -56,16 +52,12 @@ public class Algorithm
 		return graph;
 	}
 
-	private static Entry<String, Circle> arbitraryNode(List<Entry<String, Circle>> notVisited)
-	{
-		return notVisited.remove(0);
-	}
 
-	public static boolean anyCover(List<Hyperbola> hyperbolas, Polygon polygon)
+	public static boolean anyCover(List<Hyperbola> hyperbolas, PreferredZone zone)
 	{
 		for (Hyperbola hyperbola : hyperbolas)
 		{
-			if (hyperbola.inRightBrunch(polygon))
+			if (hyperbola.inRightBrunch(zone.getPoly()))
 				return true;
 		}
 		return false;

@@ -4,54 +4,58 @@ import HyperEdgeFramework.Util.DoubleUtil;
 import HyperEdgeFramework.Util.GeomUtil;
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Geometry;
-import com.vividsolutions.jts.geom.GeometryFactory;
-import javafx.util.Pair;
+import com.vividsolutions.jts.geom.LineString;
+import com.vividsolutions.jts.geom.Point;
 
 public class Hyperbola
 {
-	double a;
-	double b;
-	GeomUtil.Transformation rule;
 
-	private Hyperbola(GeometryFactory gFactory, Geometry figure1, Geometry figure2)
+
+	PreferredZone from;
+	PreferredZone to;
+
+	double static_distance;
+
+
+	private Hyperbola(PreferredZone from, PreferredZone to)
 	{
-		rule = new GeomUtil.Transformation(figure1, figure2);
-		Geometry fig1 = rule.transform(gFactory, (Geometry) figure1.clone());
-		Geometry fig2 = rule.transform(gFactory, ((Geometry) figure2.clone()));
-		if (!checkDistance(fig1, fig2))
-			throw new IllegalArgumentException("Distance between figures must be greater zero");
-		a = computeA(fig1, fig2);
-		b = computeB(fig1, fig2);
+		this.from = from;
+		this.to = to;
+		if (!checkDistance(from.getPoly(), to.getPoly()))
+			throw new IllegalArgumentException(String.format("Distance between %s and %s must be positive", from, to));
+		compute_distance();
 	}
 
 	/**
-	 * @param factory for creating polygons
-	 * @param figure1 compute from
-	 * @param figure2 compute to, getting hyperbola brunch closer to this
+	 * @param from compute from
+	 * @param to   compute to, getting hyperbola brunch closer to this
 	 * @return computed hyperbola
 	 * @throws IllegalArgumentException if distance between figures equal zero
 	 */
-	public static Hyperbola create(GeometryFactory factory, Geometry figure1, Geometry figure2)
+	public static Hyperbola create(PreferredZone from, PreferredZone to)
 	{
-		return new Hyperbola(factory, figure1, figure2);
-	}
-
-	private static double computeA(Geometry figure1, Geometry figure2)
-	{
-		return figure1.distance(figure2) / 2;
-	}
-
-	private static double computeB(Geometry figure1, Geometry figure2)
-	{
-		double a = figure1.distance(figure2) / 2.;
-		double c = figure1.getCentroid().distance(figure2.getCentroid()) / 2;
-		return Math.sqrt(c * c - a * a);
+		return new Hyperbola(from, to);
 	}
 
 	private static boolean checkDistance(Geometry fig1, Geometry fig2)
 	{
 		double distance = fig1.distance(fig2);
 		return DoubleUtil.g(distance, 0);
+	}
+
+	private void compute_distance()
+	{
+		Coordinate c1 = from.getPoly().getCentroid().getCoordinate();
+		Coordinate c2 = to.getPoly().getCentroid().getCoordinate();
+
+		LineString segment = GeomUtil.factory().createLineString(new Coordinate[]{c1, c2});
+
+		Coordinate fromBound = GeomUtil.computeIntersectionPoint(GeomUtil.factory(), from.getPoly(), segment);
+		Coordinate toBound = GeomUtil.computeIntersectionPoint(GeomUtil.factory(), to.getPoly(), segment);
+
+		double fromDist = fromBound != null ? GeomUtil.metric().dist(c1, fromBound) * from.alpha : 0;
+		double toDist = GeomUtil.metric().dist(c2, toBound) * to.alpha;
+		static_distance = fromDist + toDist + GeomUtil.metric().dist(fromBound != null ? fromBound : c1, toBound);
 	}
 
 	public boolean inRightBrunch(Geometry figure)
@@ -66,16 +70,11 @@ public class Hyperbola
 
 	public boolean inRightBrunch(Coordinate coordinate)
 	{
-		Coordinate cBar = rule.transform(coordinate);
-		return DoubleUtil.g(cBar.x, 0)
-				&& DoubleUtil.ge((cBar.x * cBar.x / (a * a)) - (cBar.y * cBar.y / (b * b)), 1);
+		Point point = GeomUtil.factory().createPoint(coordinate);
+		Double fromDist = from.distanceToCentroid(point);
+		Double toDist = to.distanceToCentroid(point);
+		return DoubleUtil.ge(fromDist - toDist, static_distance);
 	}
 
-	/**
-	 * @return (a, b) parameters
-	 */
-	public Pair<Double, Double> getHyperbolaParameters()
-	{
-		return new Pair<>(a, b);
-	}
+
 }
