@@ -32,7 +32,8 @@ public class PreferredZone implements Geometry
 
 	public Polygon getPoly()
 	{
-		return ((Polygon) poly.clone());
+//		return ((Polygon) poly.clone());
+		return poly;
 	}
 
 	public int getIndex()

@@ -10,12 +10,16 @@ import rx.Observable;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class Algorithm
 {
-	public static SimpleWeightedGraph<Integer, EdgeWrapper> algorithm1Circle(RTree<Integer, PreferredZone> rtree, List<PreferredZone> zones)
+	public static SimpleWeightedGraph<Integer, Edge> hyperEdgeAlgorithm(RTree<Integer, PreferredZone> rtree, List<PreferredZone> zones)
 	{
-		SimpleWeightedGraph<Integer, EdgeWrapper> graph = new SimpleWeightedGraph<>(EdgeWrapper.class);
+
+		final int nearest_k = 10;
+
+		SimpleWeightedGraph<Integer, Edge> graph = new SimpleWeightedGraph<>(Edge.class);
 		while (zones.size() > 1)
 		{
 			PreferredZone vZone = zones.remove(0);
@@ -24,23 +28,27 @@ public class Algorithm
 			ArrayList<Hyperbola> hyperbolas = new ArrayList<>();
 
 			int currentNearest = 2;
-
+			List<Entry<Integer, PreferredZone>> nearestListOld = new ArrayList<>();
+			nearestListOld.add(new Entry<>(vZone.getIndex(), vZone));
 			while (true)
 			{
 				Observable<Entry<Integer, PreferredZone>> nearest = rtree.nearest(vZone.mbr(),
 						java.lang.Double.POSITIVE_INFINITY,
 						currentNearest);
-				List<Entry<Integer, PreferredZone>> nearestList = nearest.toList().toBlocking().single();
+				List<Entry<Integer, PreferredZone>> nearestListNew = nearest.toList().toBlocking().single();
 
-				if (nearestList.size() <= currentNearest - 1)
+				if (nearestListNew.size() <= currentNearest - 1)
 					break;
 
-				PreferredZone uZone = nearestList.get(currentNearest - 1).geometry();
+				PreferredZone uZone = nextNearestNeighbor(nearestListOld, nearestListNew).geometry();
+//				System.out.println(nearestListOld + " " + nearestListNew);
+				System.out.println(uZone);
+				nearestListOld = nearestListNew;
 
 				if (!anyCover(hyperbolas, uZone))
 				{
 					graph.addVertex(uZone.getIndex());
-					EdgeWrapper edge = graph.addEdge(vZone.getIndex(), uZone.getIndex());
+					Edge edge = graph.addEdge(vZone.getIndex(), uZone.getIndex());
 					if (edge != null)
 					{
 						double distance = vZone.distance(uZone);
@@ -48,9 +56,10 @@ public class Algorithm
 						edge.setV1(uZone.getIndex());
 						edge.setV2(vZone.getIndex());
 						graph.setEdgeWeight(edge, distance);
+						hyperbolas.add(Hyperbola.create(vZone, uZone));
+						System.out.println(String.format("hyp %d %d", vZone.getIndex(), uZone.getIndex()));
+//						System.out.println(nearestListNew);
 					}
-					hyperbolas.add(Hyperbola.create(vZone, uZone));
-
 					currentNearest++;
 				} else
 				{
@@ -59,6 +68,17 @@ public class Algorithm
 			}
 		}
 		return graph;
+	}
+
+
+	private static Entry<Integer, PreferredZone> nextNearestNeighbor(List<Entry<Integer, PreferredZone>> oldList, List<Entry<Integer, PreferredZone>> newList)
+	{
+		for (int i = oldList.size() - 1; i >= 0; i--)
+		{
+			if (!Objects.equals(oldList.get(i).value(), newList.get(i + 1).value()))
+				return newList.get(i + 1);
+		}
+		return null;
 	}
 
 
@@ -72,7 +92,7 @@ public class Algorithm
 		return false;
 	}
 
-	public static class EdgeWrapper extends DefaultWeightedEdge
+	public static class Edge extends DefaultWeightedEdge
 	{
 		private double edgeWeight;
 		private int v1, v2;

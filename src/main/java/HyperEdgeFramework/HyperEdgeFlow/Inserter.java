@@ -14,7 +14,7 @@ import java.util.Set;
 
 public class Inserter
 {
-	public static void insert(SimpleWeightedGraph<Integer, Algorithm.EdgeWrapper> graph,
+	public static void insert(SimpleWeightedGraph<Integer, Algorithm.Edge> graph,
 	                          List<PreferredZone> zones, Set<Pair<Integer, Point>> points)
 	{
 		for (Pair<Integer, Point> point : points)
@@ -23,7 +23,7 @@ public class Inserter
 		}
 	}
 
-	public static void insert(SimpleWeightedGraph<Integer, Algorithm.EdgeWrapper> graph,
+	public static void insert(SimpleWeightedGraph<Integer, Algorithm.Edge> graph,
 	                          List<PreferredZone> zones, Pair<Integer, Point> pointBundle)
 	{
 		graph.addVertex(pointBundle.getKey());
@@ -47,7 +47,7 @@ public class Inserter
 			{
 				if (!Algorithm.anyCover(hyperbolas, zone))
 				{
-					Algorithm.EdgeWrapper edge = graph.addEdge(pointBundle.getKey(), zone.getIndex());
+					Algorithm.Edge edge = graph.addEdge(pointBundle.getKey(), zone.getIndex());
 					if (edge != null)
 					{
 						edge.setEdgeWeight(distance);

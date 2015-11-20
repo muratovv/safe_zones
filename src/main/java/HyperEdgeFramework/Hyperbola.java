@@ -76,5 +76,4 @@ public class Hyperbola
 		return DoubleUtil.ge(fromDist - toDist, static_distance);
 	}
 
-
 }

@@ -30,7 +30,7 @@ public class AlgorithmTest
 		TreeInflater treeInflater = new TreeInflater(map(circles)).invoke();
 		RTree<Integer, PreferredZone> rTree = treeInflater.getRTree();
 		ArrayList<PreferredZone> notVisited = treeInflater.getNotVisited();
-		SimpleWeightedGraph<Integer, Algorithm.EdgeWrapper> graph = Algorithm.algorithm1Circle(rTree, notVisited);
+		SimpleWeightedGraph<Integer, Algorithm.Edge> graph = Algorithm.hyperEdgeAlgorithm(rTree, notVisited);
 		System.out.println(graph);
 		Assert.assertEquals(4, graph.vertexSet().size());
 		Assert.assertEquals(3, graph.edgeSet().size());
@@ -42,8 +42,8 @@ public class AlgorithmTest
 		ArrayList<Circle> circles = Grid.squareGrid(3, Point.create(0, 0), 1, 1);
 		circles.remove(4);
 		TreeInflater inflater = new TreeInflater(map(circles)).invoke();
-		SimpleWeightedGraph<Integer, Algorithm.EdgeWrapper> graph
-				= Algorithm.algorithm1Circle(inflater.getRTree(), inflater.getNotVisited());
+		SimpleWeightedGraph<Integer, Algorithm.Edge> graph
+				= Algorithm.hyperEdgeAlgorithm(inflater.getRTree(), inflater.getNotVisited());
 		Assert.assertEquals(8, graph.vertexSet().size());
 		Assert.assertEquals(14, graph.edgeSet().size());
 		System.out.println(graph);
@@ -55,8 +55,8 @@ public class AlgorithmTest
 		ArrayList<Circle> circles = Grid.squareGrid(3, Point.create(0, 0), 1, 1);
 		circles.remove(4);
 		TreeInflater inflater = new TreeInflater(map(circles)).invoke();
-		SimpleWeightedGraph<Integer, Algorithm.EdgeWrapper> graph
-				= Algorithm.algorithm1Circle(inflater.getRTree(), inflater.getNotVisited());
+		SimpleWeightedGraph<Integer, Algorithm.Edge> graph
+				= Algorithm.hyperEdgeAlgorithm(inflater.getRTree(), inflater.getNotVisited());
 
 		Inserter.insert(graph, inflater.getNotVisited(), new Pair<>(-1, GeomUtil.factory().createPoint(new Coordinate(-2, -3))));
 		System.out.println(graph);
@@ -71,9 +71,9 @@ public class AlgorithmTest
 		ArrayList<Circle> circles = Grid.squareGrid(3, Point.create(0, 0), 1, 1);
 		circles.remove(4);
 		TreeInflater inflater = new TreeInflater(map(circles)).invoke();
-		SimpleWeightedGraph<Integer, Algorithm.EdgeWrapper> graph
-				= Algorithm.algorithm1Circle(inflater.getRTree(), inflater.getNotVisited());
-		DijkstraShortestPath<Integer, Algorithm.EdgeWrapper> shortestPath = new DijkstraShortestPath<>(graph, 0, 7);
+		SimpleWeightedGraph<Integer, Algorithm.Edge> graph
+				= Algorithm.hyperEdgeAlgorithm(inflater.getRTree(), inflater.getNotVisited());
+		DijkstraShortestPath<Integer, Algorithm.Edge> shortestPath = new DijkstraShortestPath<>(graph, 0, 7);
 		Assert.assertEquals(4, shortestPath.getPathEdgeList().size());
 	}
 
