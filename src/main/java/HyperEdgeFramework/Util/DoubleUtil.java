@@ -2,7 +2,7 @@ package HyperEdgeFramework.Util;
 
 public class DoubleUtil
 {
-	public static double eps = 0.0001;
+	public static double eps = 0.001;
 
 
 	/**

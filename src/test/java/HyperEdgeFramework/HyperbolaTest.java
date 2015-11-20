@@ -2,6 +2,7 @@ package HyperEdgeFramework;
 
 import HyperEdgeFramework.Util.AdapterUtil;
 import HyperEdgeFramework.Util.DoubleUtil;
+import HyperEdgeFramework.Util.GeomUtil;
 import com.github.davidmoten.rtree.geometry.Circle;
 import com.github.davidmoten.rtree.geometry.Point;
 import com.vividsolutions.jts.geom.Coordinate;
@@ -38,7 +39,7 @@ public class HyperbolaTest
 	static Geometry createCircle(Coordinate centre, double radius, int polygonSize)
 	{
 		Geometry centrePt = gFactory.createPoint(centre);
-		return centrePt.buffer(radius, polygonSize);
+		return GeomUtil.getReducer().reduce(centrePt.buffer(radius, polygonSize));
 	}
 
 	/**
@@ -50,14 +51,14 @@ public class HyperbolaTest
 	@Test
 	public void testHyperView() throws Exception
 	{
-		double radius = .001;
-		double x = .5;
+		double radius = .11;
+		double x = 1;
 		Geometry c1 = createCircle(new Coordinate(-x, 0), radius, 3);
 		Geometry c2 = createCircle(new Coordinate(x, 0), radius, 3);
 		PreferredZone z1 = new PreferredZone(((Polygon) c1), 0);
 		PreferredZone z2 = new PreferredZone(((Polygon) c2), 0);
 		Hyperbola hyperbola = Hyperbola.create(z1, z2);
-		System.out.println(hyperView(hyperbola, -2, 2, 0.05));
+		System.out.println(hyperView(hyperbola, -2, 5, 0.05));
 	}
 
 

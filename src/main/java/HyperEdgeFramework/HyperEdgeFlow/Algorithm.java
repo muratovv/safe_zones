@@ -17,8 +17,6 @@ public class Algorithm
 	public static SimpleWeightedGraph<Integer, Edge> hyperEdgeAlgorithm(RTree<Integer, PreferredZone> rtree, List<PreferredZone> zones)
 	{
 
-		final int nearest_k = 10;
-
 		SimpleWeightedGraph<Integer, Edge> graph = new SimpleWeightedGraph<>(Edge.class);
 		while (zones.size() > 1)
 		{
@@ -41,8 +39,6 @@ public class Algorithm
 					break;
 
 				PreferredZone uZone = nextNearestNeighbor(nearestListOld, nearestListNew).geometry();
-//				System.out.println(nearestListOld + " " + nearestListNew);
-				System.out.println(uZone);
 				nearestListOld = nearestListNew;
 
 				if (!anyCover(hyperbolas, uZone))
@@ -56,10 +52,8 @@ public class Algorithm
 						edge.setV1(uZone.getIndex());
 						edge.setV2(vZone.getIndex());
 						graph.setEdgeWeight(edge, distance);
-						hyperbolas.add(Hyperbola.create(vZone, uZone));
-						System.out.println(String.format("hyp %d %d", vZone.getIndex(), uZone.getIndex()));
-//						System.out.println(nearestListNew);
 					}
+					hyperbolas.add(Hyperbola.create(vZone, uZone));
 					currentNearest++;
 				} else
 				{
@@ -125,6 +119,12 @@ public class Algorithm
 		public void setV2(int v2)
 		{
 			this.v2 = v2;
+		}
+
+		@Override
+		public String toString()
+		{
+			return String.format("[%s, %s] = %s", v1, v2, edgeWeight);
 		}
 	}
 }

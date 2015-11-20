@@ -3,6 +3,7 @@ package HyperEdgeFramework.Util;
 import com.vividsolutions.jts.algorithm.Angle;
 import com.vividsolutions.jts.geom.*;
 import com.vividsolutions.jts.math.Vector2D;
+import com.vividsolutions.jts.precision.GeometryPrecisionReducer;
 import javafx.util.Pair;
 
 /**
@@ -16,6 +17,13 @@ public class GeomUtil
 	// StaticZone /////////////////////////////////////////////////////////////
 	private static GeometryFactory gFactory = new GeometryFactory();
 	private static GeomUtil.Metric metric = new GeomUtil.Metric.Eucludean();
+	private static PrecisionModel pm = new PrecisionModel(PrecisionModel.FLOATING_SINGLE);
+	private static GeometryPrecisionReducer reducer = new GeometryPrecisionReducer(pm);
+
+	public static GeometryPrecisionReducer getReducer()
+	{
+		return reducer;
+	}
 
 	public static GeometryFactory factory()
 	{

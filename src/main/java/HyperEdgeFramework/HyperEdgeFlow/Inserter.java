@@ -57,11 +57,6 @@ public class Inserter
 					}
 					hyperbolas.add(Hyperbola.create(pointZone, zone));
 				}
-			} else
-			{
-				// TODO now, not supported points, that inside in zones
-				throw new IllegalArgumentException(
-						String.format("%s inside zone %s", pointZone, zone));
 			}
 		}
 	}
