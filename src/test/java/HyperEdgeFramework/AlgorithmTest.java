@@ -9,6 +9,7 @@ import com.github.davidmoten.rtree.geometry.Circle;
 import com.github.davidmoten.rtree.geometry.Point;
 import com.vividsolutions.jts.geom.Coordinate;
 import javafx.util.Pair;
+import org.jgrapht.alg.DijkstraShortestPath;
 import org.jgrapht.graph.SimpleWeightedGraph;
 import org.junit.Assert;
 import org.junit.Test;
@@ -60,6 +61,20 @@ public class AlgorithmTest
 		Inserter.insert(graph, inflater.getNotVisited(), new Pair<>(-1, GeomUtil.factory().createPoint(new Coordinate(-2, -3))));
 		System.out.println(graph);
 		Assert.assertEquals(3, graph.edgesOf(-1).size());
+
+
+	}
+
+	@Test
+	public void testShortestPath() throws Exception
+	{
+		ArrayList<Circle> circles = Grid.squareGrid(3, Point.create(0, 0), 1, 1);
+		circles.remove(4);
+		TreeInflater inflater = new TreeInflater(map(circles)).invoke();
+		SimpleWeightedGraph<Integer, Algorithm.EdgeWrapper> graph
+				= Algorithm.algorithm1Circle(inflater.getRTree(), inflater.getNotVisited());
+		DijkstraShortestPath<Integer, Algorithm.EdgeWrapper> shortestPath = new DijkstraShortestPath<>(graph, 0, 7);
+		Assert.assertEquals(4, shortestPath.getPathEdgeList().size());
 	}
 
 	private List<PreferredZone> map(List<Circle> lst)

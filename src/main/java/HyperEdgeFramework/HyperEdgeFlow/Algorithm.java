@@ -4,6 +4,7 @@ import HyperEdgeFramework.Hyperbola;
 import HyperEdgeFramework.PreferredZone;
 import com.github.davidmoten.rtree.Entry;
 import com.github.davidmoten.rtree.RTree;
+import org.jgrapht.graph.DefaultWeightedEdge;
 import org.jgrapht.graph.SimpleWeightedGraph;
 import rx.Observable;
 
@@ -27,7 +28,7 @@ public class Algorithm
 			while (true)
 			{
 				Observable<Entry<Integer, PreferredZone>> nearest = rtree.nearest(vZone.mbr(),
-						Double.POSITIVE_INFINITY,
+						java.lang.Double.POSITIVE_INFINITY,
 						currentNearest);
 				List<Entry<Integer, PreferredZone>> nearestList = nearest.toList().toBlocking().single();
 
@@ -39,7 +40,15 @@ public class Algorithm
 				if (!anyCover(hyperbolas, uZone))
 				{
 					graph.addVertex(uZone.getIndex());
-					graph.addEdge(vZone.getIndex(), uZone.getIndex(), new EdgeWrapper<>(vZone.distance(uZone)));
+					EdgeWrapper edge = graph.addEdge(vZone.getIndex(), uZone.getIndex());
+					if (edge != null)
+					{
+						double distance = vZone.distance(uZone);
+						edge.setEdgeWeight(distance);
+						edge.setV1(uZone.getIndex());
+						edge.setV2(vZone.getIndex());
+						graph.setEdgeWeight(edge, distance);
+					}
 					hyperbolas.add(Hyperbola.create(vZone, uZone));
 
 					currentNearest++;
@@ -63,36 +72,39 @@ public class Algorithm
 		return false;
 	}
 
-	public static class EdgeWrapper<T>
+	public static class EdgeWrapper extends DefaultWeightedEdge
 	{
-		final T value;
+		private double edgeWeight;
+		private int v1, v2;
 
-		public EdgeWrapper(T value)
+		public double getEdgeWeight()
 		{
-			this.value = value;
+			return edgeWeight;
 		}
 
-		public T value()
+		public void setEdgeWeight(double edgeWeight)
 		{
-			return value();
+			this.edgeWeight = edgeWeight;
 		}
 
-		@Override
-		public boolean equals(Object o)
+		public int getV1()
 		{
-			return false;
+			return v1;
 		}
 
-		@Override
-		public int hashCode()
+		public void setV1(int v1)
 		{
-			return value.hashCode();
+			this.v1 = v1;
 		}
 
-		@Override
-		public String toString()
+		public int getV2()
 		{
-			return value + "";
+			return v2;
+		}
+
+		public void setV2(int v2)
+		{
+			this.v2 = v2;
 		}
 	}
 }

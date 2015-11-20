@@ -47,7 +47,14 @@ public class Inserter
 			{
 				if (!Algorithm.anyCover(hyperbolas, zone))
 				{
-					graph.addEdge(pointBundle.getKey(), zone.getIndex(), new Algorithm.EdgeWrapper<>(distance));
+					Algorithm.EdgeWrapper edge = graph.addEdge(pointBundle.getKey(), zone.getIndex());
+					if (edge != null)
+					{
+						edge.setEdgeWeight(distance);
+						edge.setV1(pointBundle.getKey());
+						edge.setV2(zone.getIndex());
+						graph.setEdgeWeight(edge, distance);
+					}
 					hyperbolas.add(Hyperbola.create(pointZone, zone));
 				}
 			} else
