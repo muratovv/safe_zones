@@ -1,11 +1,15 @@
 package HyperEdgeFramework;
 
+import com.github.davidmoten.rtree.RTree;
+import com.github.davidmoten.rtree.geometry.Circle;
+import com.github.davidmoten.rtree.geometry.Point;
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.LineSegment;
 import com.vividsolutions.jts.geom.Polygon;
 
 import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
 
 public class testPolygon
 {
@@ -38,5 +42,23 @@ public class testPolygon
 				new Coordinate(10, 1),
 				new Coordinate(10, 0)});
 
+		// TODO: 26.11.15 check performance
+		ArrayList<Circle> circles = Grid.linearGrid(10, Point.create(0, 0), 5, 1);
+		RTree<Integer, Circle> rTree = RTree.create();
+		for (Circle circle : circles)
+		{
+			rTree = rTree.add(1, circle);
+		}
+		final int[] counter = {0};
+		rTree.nearest(Point.create(0, 0), Double.POSITIVE_INFINITY, circles.size())
+				.doOnNext(integerCircleEntry -> {
+					System.out.println(integerCircleEntry.geometry());
+					if (counter[0] == 5)
+						throw new RuntimeException();
+					else counter[0]++;
+				})
+				.doOnError(Throwable::printStackTrace)
+				.doOnSubscribe(() -> System.out.println("subscribed"))
+				.subscribe();
 	}
 }

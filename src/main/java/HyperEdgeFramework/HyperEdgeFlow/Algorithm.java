@@ -17,6 +17,7 @@ public class Algorithm
 	public static SimpleWeightedGraph<Integer, Edge> hyperEdgeAlgorithm(RTree<Integer, PreferredZone> rtree, List<PreferredZone> zones)
 	{
 
+		int quantity = zones.size() - 1;
 		SimpleWeightedGraph<Integer, Edge> graph = new SimpleWeightedGraph<>(Edge.class);
 		while (zones.size() > 1)
 		{
@@ -25,21 +26,18 @@ public class Algorithm
 
 			ArrayList<Hyperbola> hyperbolas = new ArrayList<>();
 
-			int currentNearest = 2;
-			List<Entry<Integer, PreferredZone>> nearestListOld = new ArrayList<>();
-			nearestListOld.add(new Entry<>(vZone.getIndex(), vZone));
+			int currentNearest = 1;
+
+			Observable<Entry<Integer, PreferredZone>> nearest = rtree.nearest(vZone.mbr(),
+					java.lang.Double.POSITIVE_INFINITY,
+					quantity);
+			List<Entry<Integer, PreferredZone>> nearestListNew = nearest.toList().toBlocking().single();
 			while (true)
 			{
-				Observable<Entry<Integer, PreferredZone>> nearest = rtree.nearest(vZone.mbr(),
-						java.lang.Double.POSITIVE_INFINITY,
-						currentNearest);
-				List<Entry<Integer, PreferredZone>> nearestListNew = nearest.toList().toBlocking().single();
-
-				if (nearestListNew.size() <= currentNearest - 1)
+				if (currentNearest >= nearestListNew.size())
 					break;
 
-				PreferredZone uZone = nextNearestNeighbor(nearestListOld, nearestListNew).geometry();
-				nearestListOld = nearestListNew;
+				PreferredZone uZone = nearestListNew.get(currentNearest).geometry();
 
 				if (!anyCover(hyperbolas, uZone))
 				{

@@ -11,6 +11,7 @@
     </JAVADOC>
     <SOURCES>
       <root url="jar://$MAVEN_REPOSITORY$/com/github/davidmoten/rtree/0.6.9/rtree-0.6.9-sources.jar!/" />
+      <root url="jar://$USER_HOME$/.ideaLibSources/rxjava-1.0.14-sources.jar!/" />
     </SOURCES>
   </library>
 </component>

@@ -7,7 +7,7 @@ import com.vividsolutions.jts.operation.distance.DistanceOp;
 
 import java.util.List;
 
-public class ComputeDistance
+public class ComputedGraphDistance
 {
 
 	/**

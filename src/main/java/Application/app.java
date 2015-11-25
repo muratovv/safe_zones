@@ -2,6 +2,7 @@ package Application;
 
 import HyperEdgeFramework.Grid;
 import HyperEdgeFramework.HyperEdgeFlow.Algorithm;
+import HyperEdgeFramework.HyperEdgeFlow.ComputedGraphDistance;
 import HyperEdgeFramework.HyperEdgeFlow.Inserter;
 import HyperEdgeFramework.PreferredZone;
 import HyperEdgeFramework.TreeInflater;
@@ -10,6 +11,7 @@ import HyperEdgeFramework.Util.GeomUtil;
 import com.github.davidmoten.rtree.geometry.Circle;
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Point;
+import com.vividsolutions.jts.geom.Polygon;
 import javafx.util.Pair;
 import org.jgrapht.alg.DijkstraShortestPath;
 import org.jgrapht.graph.SimpleWeightedGraph;
@@ -22,7 +24,7 @@ import java.util.stream.Collectors;
 
 public class app
 {
-	private static double alpha = 0.5;
+	private static double alpha = 0;
 
 	public static void main(String[] args)
 	{
@@ -31,24 +33,34 @@ public class app
 
 	private static void flow()
 	{
-		List<PreferredZone> zones = getterOfZones.getZones();
-		Set<Pair<Integer, Point>> points = getterOfZones.getPoints();
+		//Set global parameters
+		GeomUtil.setMetric(new GeomUtil.Metric.Eucludean());
+		alpha = 0.5;
 
+		//Construct dataset
+		List<PreferredZone> zones = getterOfZones.getZones();
 		TreeInflater inflater = new TreeInflater(zones).invoke();
 
+		//compute graph G
 		SimpleWeightedGraph<Integer, Algorithm.Edge> graph
 				= Algorithm.hyperEdgeAlgorithm(inflater.getRTree(), inflater.getNotVisited());
 
+		//construct start and end points
+		Set<Pair<Integer, Point>> points = getterOfZones.getPoints();
 		Inserter.insert(graph, inflater.getNotVisited(), points);
 		DijkstraShortestPath<Integer, Algorithm.Edge> shortestPath = new DijkstraShortestPath<>(graph, -1, -2);
+
 		System.out.println(graph);
-		System.out.println(shortestPath.getPathEdgeList());
+		List<Algorithm.Edge> pathEdgeList = shortestPath.getPathEdgeList();
+		System.out.println(pathEdgeList);
+		System.out.println(ComputedGraphDistance.compute(pathEdgeList, inflater.getNotVisited()));
+
 
 	}
 
 	private static List<PreferredZone> map(List<Circle> lst)
 	{
-		return lst.stream().map(circle -> new PreferredZone(AdapterUtil.polygon(GeomUtil.factory(), circle, 4), alpha))
+		return lst.stream().map(circle -> new PreferredZone(((Polygon) GeomUtil.getReducer().reduce(AdapterUtil.polygon(GeomUtil.factory(), circle, 2))), alpha))
 				.collect(Collectors.toCollection(ArrayList::new));
 	}
 
@@ -65,7 +77,7 @@ public class app
 			Set<Pair<Integer, Point>> pointsBundle = new HashSet<>();
 
 			Coordinate start = new Coordinate(-2, -3);
-			Coordinate end = new Coordinate(-2, 12);
+			Coordinate end = new Coordinate(-2, 17);
 
 			pointsBundle.add(new Pair<>(-1, GeomUtil.factory().createPoint(start)));
 			pointsBundle.add(new Pair<>(-2, GeomUtil.factory().createPoint(end)));
@@ -74,7 +86,7 @@ public class app
 
 		static List<PreferredZone> gridZones1()
 		{
-			ArrayList<Circle> circles = Grid.squareGrid(3, com.github.davidmoten.rtree.geometry.Point.create(0, 0), 1, 1);
+			ArrayList<Circle> circles = Grid.squareGrid(100, com.github.davidmoten.rtree.geometry.Point.create(0, 0), 5, 5);
 			return map(circles);
 		}
 	}
