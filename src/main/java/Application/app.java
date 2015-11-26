@@ -4,8 +4,8 @@ import HyperEdgeFramework.Grid;
 import HyperEdgeFramework.HyperEdgeFlow.Algorithm;
 import HyperEdgeFramework.HyperEdgeFlow.ComputedGraphDistance;
 import HyperEdgeFramework.HyperEdgeFlow.Inserter;
+import HyperEdgeFramework.Inflater;
 import HyperEdgeFramework.PreferredZone;
-import HyperEdgeFramework.TreeInflater;
 import HyperEdgeFramework.Util.AdapterUtil;
 import HyperEdgeFramework.Util.GeomUtil;
 import com.github.davidmoten.rtree.geometry.Circle;
@@ -39,7 +39,7 @@ public class app
 
 		//Construct dataset
 		List<PreferredZone> zones = getterOfZones.getZones();
-		TreeInflater inflater = new TreeInflater(zones).invoke();
+		Inflater inflater = new Inflater(zones).invoke();
 
 		//compute graph G
 		SimpleWeightedGraph<Integer, Algorithm.Edge> graph

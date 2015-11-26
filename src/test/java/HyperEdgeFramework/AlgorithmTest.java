@@ -26,9 +26,9 @@ public class AlgorithmTest
 	{
 		ArrayList<Circle> circles = Grid.linearGrid(4, Point.create(0, 0), 1, 1);
 
-		TreeInflater treeInflater = new TreeInflater(map(circles)).invoke();
-		RTree<Integer, PreferredZone> rTree = treeInflater.getRTree();
-		ArrayList<PreferredZone> notVisited = treeInflater.getNotVisited();
+		Inflater inflater = new Inflater(map(circles)).invoke();
+		RTree<Integer, PreferredZone> rTree = inflater.getRTree();
+		ArrayList<PreferredZone> notVisited = inflater.getNotVisited();
 		SimpleWeightedGraph<Integer, Algorithm.Edge> graph = Algorithm.hyperEdgeAlgorithm(rTree, notVisited);
 		System.out.println(graph);
 		Assert.assertEquals(4, graph.vertexSet().size());
@@ -40,7 +40,7 @@ public class AlgorithmTest
 	{
 		ArrayList<Circle> circles = Grid.squareGrid(3, Point.create(0, 0), 1, 1);
 		circles.remove(4);
-		TreeInflater inflater = new TreeInflater(map(circles)).invoke();
+		Inflater inflater = new Inflater(map(circles)).invoke();
 		SimpleWeightedGraph<Integer, Algorithm.Edge> graph
 				= Algorithm.hyperEdgeAlgorithm(inflater.getRTree(), inflater.getNotVisited());
 		Assert.assertEquals(8, graph.vertexSet().size());
@@ -53,7 +53,7 @@ public class AlgorithmTest
 	{
 		ArrayList<Circle> circles = Grid.squareGrid(3, Point.create(0, 0), 1, 1);
 		circles.remove(4);
-		TreeInflater inflater = new TreeInflater(map(circles)).invoke();
+		Inflater inflater = new Inflater(map(circles)).invoke();
 		SimpleWeightedGraph<Integer, Algorithm.Edge> graph
 				= Algorithm.hyperEdgeAlgorithm(inflater.getRTree(), inflater.getNotVisited());
 
@@ -70,7 +70,7 @@ public class AlgorithmTest
 	{
 //		ArrayList<Circle> circles = Grid.squareGrid(3, Point.create(0, 0), 1, 1);
 //		circles.remove(4);
-//		TreeInflater inflater = new TreeInflater(map(circles)).invoke();
+//		Inflater inflater = new Inflater(map(circles)).invoke();
 //		SimpleWeightedGraph<Integer, Algorithm.Edge> graph
 //				= Algorithm.hyperEdgeAlgorithm(inflater.getRTree(), inflater.getNotVisited());
 //		DijkstraShortestPath<Integer, Algorithm.Edge> shortestPath = new DijkstraShortestPath<>(graph, 0, 7);

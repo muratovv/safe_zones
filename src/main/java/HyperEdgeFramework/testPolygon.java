@@ -15,7 +15,7 @@ public class testPolygon
 {
 	public static void main(String[] args) throws NoSuchMethodException, IllegalAccessException, InvocationTargetException, InstantiationException
 	{
-//		TreeInflater inflater = new TreeInflater(Grid.squareGrid(3, com.github.davidmoten.rtree.geometry.Point.create(0, 0), 1, 1)).invoke();
+//		Inflater inflater = new Inflater(Grid.squareGrid(3, com.github.davidmoten.rtree.geometry.Point.create(0, 0), 1, 1)).invoke();
 //		SimpleWeightedGraph<String, Algorithm.Edge> preCalcGraph = Algorithm.hyperEdgeAlgorithm(inflater.getRTree(), inflater.getNotVisited());
 //		Set<Entry<String, com.github.davidmoten.rtree.geometry.Point>> setOfPoints = new HashSet<>();
 //		setOfPoints.add(Entry.entry("s", com.github.davidmoten.rtree.geometry.Point.create(-2, -3)));

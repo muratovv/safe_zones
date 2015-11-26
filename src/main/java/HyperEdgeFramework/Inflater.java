@@ -1,20 +1,30 @@
 package HyperEdgeFramework;
 
+import HyperEdgeFramework.Util.AdapterUtil;
+import HyperEdgeFramework.Util.GeomUtil;
 import com.github.davidmoten.rtree.Entry;
 import com.github.davidmoten.rtree.RTree;
+import com.github.davidmoten.rtree.geometry.Circle;
+import com.vividsolutions.jts.geom.Polygon;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class TreeInflater
+public class Inflater
 {
 	private RTree<Integer, PreferredZone> rTree;
 	private ArrayList<PreferredZone> notVisited = new ArrayList<>();
 
-	public TreeInflater(List<PreferredZone> zones)
+	public Inflater(List<PreferredZone> zones)
 	{
 		notVisited.addAll(zones.stream().collect(Collectors.toList()));
+	}
+
+	public static ArrayList<PreferredZone> map(List<Circle> lst, double alpha, int vertexesPerPolygon)
+	{
+		return lst.stream().map(circle -> new PreferredZone(((Polygon) GeomUtil.getReducer().reduce(AdapterUtil.polygon(GeomUtil.factory(), circle, vertexesPerPolygon))), alpha))
+				.collect(Collectors.toCollection(ArrayList::new));
 	}
 
 	public RTree<Integer, PreferredZone> getRTree()
@@ -28,7 +38,7 @@ public class TreeInflater
 		return (ArrayList<PreferredZone>) notVisited.clone();
 	}
 
-	public TreeInflater invoke()
+	public Inflater invoke()
 	{
 		rTree = RTree.create();
 		for (PreferredZone preferredZone : notVisited)
