@@ -30,4 +30,12 @@ public class ComputedGraphStat
 	{
 		return edges;
 	}
+
+	@Override
+	public String toString()
+	{
+		final StringBuilder sb = new StringBuilder("GraphStat: ")
+				.append("edges=").append(edges);
+		return sb.toString();
+	}
 }

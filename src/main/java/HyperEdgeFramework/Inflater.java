@@ -27,6 +27,12 @@ public class Inflater
 				.collect(Collectors.toCollection(ArrayList::new));
 	}
 
+	public static ArrayList<Polygon> map(List<Circle> lst, int splits)
+	{
+		return lst.stream().map(circle -> ((Polygon) GeomUtil.getReducer().reduce(AdapterUtil.polygon(GeomUtil.factory(), circle, splits))))
+				.collect(Collectors.toCollection(ArrayList::new));
+	}
+
 	public RTree<Integer, PreferredZone> getRTree()
 	{
 		return rTree;

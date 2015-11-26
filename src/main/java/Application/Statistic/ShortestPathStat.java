@@ -30,4 +30,13 @@ public class ShortestPathStat
 	{
 		return usedZones;
 	}
+
+	@Override
+	public String toString()
+	{
+		final StringBuilder sb = new StringBuilder("ShortestPath: ")
+				.append("usedZones=").append(usedZones)
+				.append(", distance=").append(distance);
+		return sb.toString();
+	}
 }

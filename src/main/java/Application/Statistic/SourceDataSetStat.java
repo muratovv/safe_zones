@@ -69,4 +69,16 @@ public class SourceDataSetStat
 	{
 		return averagePolygonSize;
 	}
+
+	@Override
+	public String toString()
+	{
+		final StringBuilder sb = new StringBuilder("Dataset:")
+				.append(", quantityOfZones=").append(quantityOfZones)
+				.append(", zonesArea=").append(zonesArea)
+				.append(", allArea=").append(allArea)
+				.append(", maxEdges=").append(maxEdges)
+				.append(", averagePolygonSize=").append(averagePolygonSize);
+		return sb.toString();
+	}
 }

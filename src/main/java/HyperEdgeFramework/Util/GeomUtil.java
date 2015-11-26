@@ -82,6 +82,11 @@ public class GeomUtil
 				return Math.sqrt((c1.x - c2.x) * (c1.x - c2.x) + (c1.y - c2.y) * (c1.y - c2.y));
 			}
 
+			@Override
+			public String toString()
+			{
+				return "euclidean";
+			}
 		}
 	}
 
