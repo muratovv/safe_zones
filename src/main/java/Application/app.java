@@ -33,7 +33,7 @@ public class app
 	private static void flow()
 	{
 		//Set global parameters
-		GeomUtil.setMetric(new GeomUtil.Metric.Eucludean());
+		GeomUtil.setMetric(new GeomUtil.Metric.Euclidean());
 		alpha = 0.5;
 
 		//Construct dataset

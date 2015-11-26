@@ -14,12 +14,10 @@ import com.vividsolutions.jts.operation.distance.DistanceOp;
 public class PreferredZone implements Geometry
 {
 	private static int currentIndex = 0;
-
 	Polygon poly;
 	double alpha;
 	Coordinate centroid;
 	int index;
-
 	public PreferredZone(Polygon polygon, double alpha)
 	{
 		if (!PolyUtil.isConvex(polygon))
@@ -28,6 +26,11 @@ public class PreferredZone implements Geometry
 		this.poly = polygon;
 		this.alpha = alpha;
 		this.index = currentIndex++;
+	}
+
+	public static void updateIndex()
+	{
+		currentIndex = 0;
 	}
 
 	public Polygon getPoly()

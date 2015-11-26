@@ -26,6 +26,8 @@ public class Inserter
 	public static void insert(SimpleWeightedGraph<Integer, Algorithm.Edge> graph,
 	                          List<PreferredZone> zones, Pair<Integer, Point> pointBundle)
 	{
+		if (inAnyZone(zones, pointBundle))
+			throw new RuntimeException("Bad point for insert");
 		graph.addVertex(pointBundle.getKey());
 		PreferredZone pointZone =
 				new PreferredZone(
@@ -59,6 +61,27 @@ public class Inserter
 				}
 			}
 		}
+	}
+
+	public static boolean inAnyZone(List<PreferredZone> zones, Pair<Integer, Point> pointBundle)
+	{
+		Point point = pointBundle.getValue();
+		for (PreferredZone zone : zones)
+		{
+			if (zone.getPoly().intersects(point))
+				return true;
+		}
+		return false;
+	}
+
+	public static boolean inAnyZone(ArrayList<Polygon> polygons, Point point)
+	{
+		for (Polygon polygon : polygons)
+		{
+			if (polygon.intersects(point))
+				return true;
+		}
+		return false;
 	}
 
 	static Geometry createCircle(GeometryFactory gFactory, Coordinate centre, double radius, int polygonSize)

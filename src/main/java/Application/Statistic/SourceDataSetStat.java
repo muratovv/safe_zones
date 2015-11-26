@@ -2,6 +2,7 @@ package Application.Statistic;
 
 import HyperEdgeFramework.PreferredZone;
 import HyperEdgeFramework.Util.GeomUtil;
+import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.MultiPolygon;
 import com.vividsolutions.jts.geom.Polygon;
 
@@ -19,6 +20,7 @@ public class SourceDataSetStat
 	double allArea;
 	int maxEdges;
 	double averagePolygonSize;
+	Geometry envelope;
 
 	public SourceDataSetStat(ArrayList<PreferredZone> zones)
 	{
@@ -38,11 +40,16 @@ public class SourceDataSetStat
 			polygons[i] = zone.getPoly();
 		}
 		MultiPolygon multiPolygon = GeomUtil.factory().createMultiPolygon(polygons);
-		allArea = multiPolygon.getEnvelope().getArea();
-
+		envelope = multiPolygon.getEnvelope();
+		allArea = envelope.getArea();
 		maxEdges = zones.size() * (zones.size() - 1) / 2;
 
 		averagePolygonSize = multiPolygon.getCoordinates().length / zones.size();
+	}
+
+	public Geometry getEnvelope()
+	{
+		return envelope;
 	}
 
 	public int quantityOfZones()
@@ -73,8 +80,8 @@ public class SourceDataSetStat
 	@Override
 	public String toString()
 	{
-		final StringBuilder sb = new StringBuilder("Dataset:")
-				.append(", quantityOfZones=").append(quantityOfZones)
+		final StringBuilder sb = new StringBuilder("Dataset: ")
+				.append("quantityOfZones=").append(quantityOfZones)
 				.append(", zonesArea=").append(zonesArea)
 				.append(", allArea=").append(allArea)
 				.append(", maxEdges=").append(maxEdges)

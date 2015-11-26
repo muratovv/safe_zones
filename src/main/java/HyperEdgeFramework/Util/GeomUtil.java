@@ -16,7 +16,7 @@ public class GeomUtil
 
 	// StaticZone /////////////////////////////////////////////////////////////
 	private static GeometryFactory gFactory = new GeometryFactory();
-	private static GeomUtil.Metric metric = new GeomUtil.Metric.Eucludean();
+	private static GeomUtil.Metric metric = new Metric.Euclidean();
 	private static PrecisionModel pm = new PrecisionModel(PrecisionModel.FLOATING_SINGLE);
 	private static GeometryPrecisionReducer reducer = new GeometryPrecisionReducer(pm);
 
@@ -55,8 +55,7 @@ public class GeomUtil
 
 	public static Coordinate computeIntersectionPoint(GeometryFactory gFactory, Polygon polygon, LineString segment)
 	{
-		Coordinate[] coordinates = polygon.intersection(segment).getCoordinates();
-
+		Coordinate[] coordinates = polygon.intersection(reducer.reduce(segment)).getCoordinates();
 		assert coordinates.length == 2;
 
 		for (Coordinate coordinate : coordinates)
@@ -74,7 +73,7 @@ public class GeomUtil
 		double dist(Coordinate c1, Coordinate c2);
 
 
-		class Eucludean implements Metric
+		class Euclidean implements Metric
 		{
 			@Override
 			public double dist(Coordinate c1, Coordinate c2)

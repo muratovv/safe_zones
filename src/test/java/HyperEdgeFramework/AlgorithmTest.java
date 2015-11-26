@@ -2,7 +2,6 @@ package HyperEdgeFramework;
 
 import HyperEdgeFramework.HyperEdgeFlow.Algorithm;
 import HyperEdgeFramework.HyperEdgeFlow.Inserter;
-import HyperEdgeFramework.Util.AdapterUtil;
 import HyperEdgeFramework.Util.GeomUtil;
 import com.github.davidmoten.rtree.RTree;
 import com.github.davidmoten.rtree.geometry.Circle;
@@ -14,8 +13,6 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.Collectors;
 
 public class AlgorithmTest
 {
@@ -26,7 +23,7 @@ public class AlgorithmTest
 	{
 		ArrayList<Circle> circles = Grid.linearGrid(4, Point.create(0, 0), 1, 1);
 
-		Inflater inflater = new Inflater(map(circles)).invoke();
+		Inflater inflater = new Inflater(Inflater.map(circles, 0.1, 4)).invoke();
 		RTree<Integer, PreferredZone> rTree = inflater.getRTree();
 		ArrayList<PreferredZone> notVisited = inflater.getNotVisited();
 		SimpleWeightedGraph<Integer, Algorithm.Edge> graph = Algorithm.hyperEdgeAlgorithm(rTree, notVisited);
@@ -40,7 +37,7 @@ public class AlgorithmTest
 	{
 		ArrayList<Circle> circles = Grid.squareGrid(3, Point.create(0, 0), 1, 1);
 		circles.remove(4);
-		Inflater inflater = new Inflater(map(circles)).invoke();
+		Inflater inflater = new Inflater(Inflater.map(circles, 0.1, 4)).invoke();
 		SimpleWeightedGraph<Integer, Algorithm.Edge> graph
 				= Algorithm.hyperEdgeAlgorithm(inflater.getRTree(), inflater.getNotVisited());
 		Assert.assertEquals(8, graph.vertexSet().size());
@@ -53,7 +50,7 @@ public class AlgorithmTest
 	{
 		ArrayList<Circle> circles = Grid.squareGrid(3, Point.create(0, 0), 1, 1);
 		circles.remove(4);
-		Inflater inflater = new Inflater(map(circles)).invoke();
+		Inflater inflater = new Inflater(Inflater.map(circles, 0.1, 4)).invoke();
 		SimpleWeightedGraph<Integer, Algorithm.Edge> graph
 				= Algorithm.hyperEdgeAlgorithm(inflater.getRTree(), inflater.getNotVisited());
 
@@ -61,8 +58,6 @@ public class AlgorithmTest
 				new Pair<>(-1, GeomUtil.factory().createPoint(new Coordinate(-2, -3))));
 		System.out.println(graph);
 		Assert.assertEquals(3, graph.edgesOf(-1).size());
-
-
 	}
 
 	@Test
@@ -75,12 +70,6 @@ public class AlgorithmTest
 //				= Algorithm.hyperEdgeAlgorithm(inflater.getRTree(), inflater.getNotVisited());
 //		DijkstraShortestPath<Integer, Algorithm.Edge> shortestPath = new DijkstraShortestPath<>(graph, 0, 7);
 //		Assert.assertEquals(4, shortestPath.getPathEdgeList().size());
-	}
-
-	private List<PreferredZone> map(List<Circle> lst)
-	{
-		return lst.stream().map(circle -> new PreferredZone(AdapterUtil.polygon(GeomUtil.factory(), circle, 4), alpha))
-				.collect(Collectors.toCollection(ArrayList::new));
 	}
 
 }
