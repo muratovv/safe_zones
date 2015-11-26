@@ -10,7 +10,7 @@ import java.util.ArrayList;
 /**
  * Getting statistic of source dataset
  */
-public class SourceDataSet
+public class SourceDataSetStat
 {
 	ArrayList<PreferredZone> zones;
 
@@ -20,7 +20,7 @@ public class SourceDataSet
 	int maxEdges;
 	double averagePolygonSize;
 
-	public SourceDataSet(ArrayList<PreferredZone> zones)
+	public SourceDataSetStat(ArrayList<PreferredZone> zones)
 	{
 		this.zones = zones;
 
