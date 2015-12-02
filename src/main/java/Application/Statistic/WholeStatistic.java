@@ -1,8 +1,10 @@
 package Application.Statistic;
 
+import com.carrotsearch.sizeof.RamUsageEstimator;
 import javafx.util.Pair;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -10,39 +12,80 @@ import java.util.concurrent.TimeUnit;
  */
 public class WholeStatistic
 {
-	Pair<ComputedGraphStat, Long> graphStat;
-	Pair<SourceDataSetStat, Long> sourceDataSetStat;
-	ArrayList<Pair<ShortestPathStat, Long>> pathStat = new ArrayList<>();
+	Pair<ComputedGraphStat, DynamicStat> graphStat;
+	Pair<SourceDataSetStat, DynamicStat> sourceDataSetStat;
+	ArrayList<Pair<ShortestPathStat, DynamicStat>> pathStat = new ArrayList<>();
 
-	public void setGraphStat(ComputedGraphStat graphStat, long time)
+	public static String time(Long ns)
 	{
-		this.graphStat = new Pair<>(graphStat, time);
+		long hours = TimeUnit.NANOSECONDS.toHours(ns);
+		long minutes = TimeUnit.NANOSECONDS.toMinutes(ns) - hours * 60;
+		long seconds = TimeUnit.NANOSECONDS.toSeconds(ns) - minutes * 60 - hours * 60;
+		long miliseconds = TimeUnit.NANOSECONDS.toMillis(ns) - seconds * 1000 - minutes * 1000 * 60 - hours * 1000 * 60 * 60;
+		StringBuilder stringBuilder = new StringBuilder();
+		if (hours > 0)
+			stringBuilder.append(hours).append("h ");
+		if (minutes > 0)
+			stringBuilder.append(minutes).append("m ");
+		if (seconds > 0)
+			stringBuilder.append(seconds).append("s ");
+		if (miliseconds > 0)
+			stringBuilder.append(miliseconds).append("ms");
+		return stringBuilder.toString();
 	}
 
-	public void setDataSetStat(SourceDataSetStat dataSetStat, long time)
+	public static String memory(Long bytes)
 	{
-		this.sourceDataSetStat = new Pair<>(dataSetStat, time);
+		return RamUsageEstimator.humanReadableUnits(bytes);
 	}
 
-	public void append(ShortestPathStat pathStat, long time)
+	public void setGraphStat(ComputedGraphStat graphStat, long time, long memory)
 	{
-		this.pathStat.add(new Pair<>(pathStat, time));
+
+		DynamicStat dynamicStat = new DynamicStat();
+		dynamicStat.setParam("time", time);
+		dynamicStat.setParam("memory", memory);
+		this.graphStat = new Pair<>(graphStat, dynamicStat);
+	}
+
+	public void setDataSetStat(SourceDataSetStat dataSetStat, long time, long memory)
+	{
+		DynamicStat dynamicStat = new DynamicStat();
+		dynamicStat.setParam("time", time);
+		dynamicStat.setParam("memory", memory);
+		this.sourceDataSetStat = new Pair<>(dataSetStat, dynamicStat);
+	}
+
+	public void append(ShortestPathStat pathStat, long insertTime, long shortestPathTime, long memory)
+	{
+		DynamicStat dynamicStat = new DynamicStat();
+		dynamicStat.setParam("shortestPathTime", shortestPathTime);
+		dynamicStat.setParam("insertTime", insertTime);
+		dynamicStat.setParam("memory", memory);
+		this.pathStat.add(new Pair<>(pathStat, dynamicStat));
 	}
 
 	public String generateDataSetStat()
 	{
-		return sourceDataSetStat.getKey() + ", loadTime=" + generateTimeOutput(sourceDataSetStat.getValue());
+		DynamicStat dynamic = sourceDataSetStat.getValue();
+		return sourceDataSetStat.getKey() + ", loadTime=" + time(dynamic.getParam("time"))
+				+ (dynamic.getParam("memory") != 0 ? ", memory=" + memory(dynamic.getParam("memory")) : "");
 	}
 
 	public String generateGraphStat()
 	{
-		return graphStat.getKey() + ", createTime=" + generateTimeOutput(graphStat.getValue());
+		DynamicStat dynamic = graphStat.getValue();
+		return graphStat.getKey() + ", createTime=" + time(dynamic.getParam("time"))
+				+ (dynamic.getParam("memory") != 0 ? ", memory=" + memory(dynamic.getParam("memory")) : "");
 	}
 
 	public String generatePathStat(int index)
 	{
-		Pair<ShortestPathStat, Long> pathStatPair = pathStat.get(index);
-		return pathStatPair.getKey().toString() + ", computeTime=" + generateTimeOutput(pathStatPair.getValue());
+		Pair<ShortestPathStat, DynamicStat> pathStat = this.pathStat.get(index);
+		return pathStat.getKey().toString()
+				+ ", insert=" + time(pathStat.getValue().getParam("insertTime"))
+				+ ", compute=" + time(pathStat.getValue().getParam("shortestPathTime"))
+				+ ", memory=" + memory(pathStat.getValue().getParam("memory"));
 	}
 
 	public String generateShortestPaths()
@@ -67,21 +110,25 @@ public class WholeStatistic
 		return stringBuilder.toString();
 	}
 
-	private String generateTimeOutput(long ns)
+
+	public static class DynamicStat
 	{
-		long hours = TimeUnit.NANOSECONDS.toHours(ns);
-		long minutes = TimeUnit.NANOSECONDS.toMinutes(ns) - hours * 60;
-		long seconds = TimeUnit.NANOSECONDS.toSeconds(ns) - minutes * 60;
-		long miliseconds = TimeUnit.NANOSECONDS.toMillis(ns) - seconds * 1000;
-		StringBuilder stringBuilder = new StringBuilder();
-		if (hours > 0)
-			stringBuilder.append(hours).append("h ");
-		if (minutes > 0)
-			stringBuilder.append(minutes).append("m ");
-		if (seconds > 0)
-			stringBuilder.append(seconds).append("s ");
-		if (miliseconds > 0)
-			stringBuilder.append(miliseconds).append("ms");
-		return stringBuilder.toString();
+		HashMap<String, Long> params = new HashMap<>();
+
+		public DynamicStat()
+		{
+
+		}
+
+		public void setParam(String param, Long value)
+		{
+			params.put(param, value);
+		}
+
+		public Long getParam(String param)
+		{
+			return params.get(param);
+		}
+
 	}
 }

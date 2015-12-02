@@ -87,6 +87,22 @@ public class GeomUtil
 				return "euclidean";
 			}
 		}
+
+
+		class Manhattan implements Metric
+		{
+			@Override
+			public double dist(Coordinate c1, Coordinate c2)
+			{
+				return Math.abs(c1.x - c2.x) + Math.abs(c1.y - c2.y);
+			}
+
+			@Override
+			public String toString()
+			{
+				return "manhattan";
+			}
+		}
 	}
 
 

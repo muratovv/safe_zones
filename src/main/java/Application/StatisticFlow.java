@@ -10,6 +10,7 @@ import HyperEdgeFramework.HyperEdgeFlow.Inserter;
 import HyperEdgeFramework.Inflater;
 import HyperEdgeFramework.PreferredZone;
 import HyperEdgeFramework.Util.GeomUtil;
+import com.carrotsearch.sizeof.RamUsageEstimator;
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Point;
 import com.vividsolutions.jts.geom.Polygon;
@@ -43,7 +44,7 @@ public class StatisticFlow
 	                     double alpha,
 	                     GeomUtil.Metric metric) throws IOException
 	{
-		this.writer = new FileWrapper(new FileWriter(file));
+		this.writer = new FileWrapper(new FileWriter(file, true));
 		this.datasets = datasets;
 		this.alpha = alpha;
 		this.metric = metric;
@@ -51,10 +52,10 @@ public class StatisticFlow
 
 	public static void main(String[] args) throws IOException
 	{
-		double alpha = 0.1;
+		double alpha = 0.;
 		GeomUtil.Metric metric = new GeomUtil.Metric.Euclidean();
-		ArrayList<Pair<ArrayList<Polygon>, ArrayList<Pair<Coordinate, Coordinate>>>> datasets =
-				generateEasyRandomDataSet(1, 1, 2, 5, 3);
+		ArrayList<Pair<ArrayList<Polygon>, ArrayList<Pair<Coordinate, Coordinate>>>> datasets
+				= generateEasyRandomDataSet(0, 10, 30, 30, 4);
 
 		StatisticFlow statisticFlow = new StatisticFlow(new File("test.txt"), datasets, alpha, metric);
 		statisticFlow.runAll();
@@ -76,7 +77,7 @@ public class StatisticFlow
 
 		WholeStatistic wholeStatistic = new WholeStatistic();
 
-		long start = System.nanoTime();
+		long startTime = System.nanoTime();
 
 		Pair<ArrayList<Polygon>, ArrayList<Pair<Coordinate, Coordinate>>> dataset = datasets.get(next);
 		ArrayList<PreferredZone> zones = generatePreferredZones(dataset.getKey());
@@ -85,42 +86,45 @@ public class StatisticFlow
 
 		SourceDataSetStat dataSetStat = new SourceDataSetStat(zones);
 
-		long end = System.nanoTime();
+		long endTime = System.nanoTime();
 
-		wholeStatistic.setDataSetStat(dataSetStat, end - start);
+		wholeStatistic.setDataSetStat(dataSetStat, endTime - startTime,
+				RamUsageEstimator.sizeOfAll(dataSetStat, inflater, zones, dataset));
 
 		System.out.println(wholeStatistic.generateDataSetStat());
 
-		start = System.nanoTime();
+		startTime = System.nanoTime();
+
 		SimpleWeightedGraph<Integer, Algorithm.Edge> G = computeGraph(inflater);
-		end = System.nanoTime();
+
+		endTime = System.nanoTime();
 
 		ComputedGraphStat graphStat = new ComputedGraphStat(G);
 
 
-		wholeStatistic.setGraphStat(graphStat, end - start);
+		wholeStatistic.setGraphStat(graphStat, endTime - startTime, RamUsageEstimator.sizeOfAll(graphStat));
 		System.out.println(wholeStatistic.generateGraphStat());
 
 		for (Pair<Point, Point> point : points)
 		{
-			start = System.nanoTime();
+			startTime = System.nanoTime();
+
 			Inserter.insert(G, inflater.getNotVisited(), new Pair<>(-1, point.getKey()));
 			Inserter.insert(G, inflater.getNotVisited(), new Pair<>(-2, point.getValue()));
-			end = System.nanoTime();
 
-			long insertTime = end - start;
+			long insertTime = System.nanoTime() - startTime; // now not consider time for adding points
 
 
-			start = System.nanoTime();
+			startTime = System.nanoTime();
 			DijkstraShortestPath<Integer, Algorithm.Edge> shortestPath = shortestPath(G);
 
 			double distance = ComputedGraphDistance.compute(shortestPath.getPathEdgeList(), inflater.getNotVisited());
-			end = System.nanoTime();
+			endTime = System.nanoTime();
 
 			ShortestPathStat stat = new ShortestPathStat(shortestPath, distance);
-			long shortestPathTime = end - start;
+			long shortestPathTime = endTime - startTime;
 
-			wholeStatistic.append(stat, insertTime + shortestPathTime);
+			wholeStatistic.append(stat, insertTime, shortestPathTime, RamUsageEstimator.sizeOfAll(stat));
 
 			G.removeVertex(-1);
 			G.removeVertex(-2);
